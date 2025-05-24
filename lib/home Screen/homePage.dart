@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.blue,
                               ),
                               Text(
-                                "$list[index]",
+                                "${list[index]}",
                                 style:const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
