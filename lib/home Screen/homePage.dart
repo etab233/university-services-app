@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 15,
                     mainAxisSpacing: 40,
-                    mainAxisExtent: 140,
+                    mainAxisExtent: 125,
                   ),
                   itemCount: list.length,
                   itemBuilder: (context, index) {
@@ -84,7 +84,13 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(color: Color(0xffd5d5d5)),
-                        //shape: BoxShape.rectangle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.4),
+                            blurRadius: 6,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -94,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Icon(
                                 icon[index],
-                                size: 25,
+                                size: 30,
                                 color: Colors.blue,
                               ),
                               Text(
