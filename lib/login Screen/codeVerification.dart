@@ -12,7 +12,7 @@ class _CodeVerificationState extends State<CodeVerification> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(
+        padding:const EdgeInsets.only(
           left: 25,
         ),
         child: Column(
@@ -48,8 +48,8 @@ class _CodeVerificationState extends State<CodeVerification> {
                   labelText: "code vervication",
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xff000000))),
-                  focusedBorder: OutlineInputBorder(
+                      borderSide:const BorderSide(color: Color(0xff000000))),
+                  focusedBorder:const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.blue,
                     ),
@@ -70,17 +70,17 @@ class _CodeVerificationState extends State<CodeVerification> {
                         builder: (context) => CodeVerification(),
                       ));
                 },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    elevation: 20,
+                    padding:const EdgeInsets.all(22)),
                 child: const Text(
                   'Confirm',
                   style: TextStyle(
                     fontSize: 20,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    elevation: 20,
-                    padding: EdgeInsets.all(22)),
               ),
             ),
             const SizedBox(
@@ -90,7 +90,7 @@ class _CodeVerificationState extends State<CodeVerification> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Go back ',
+              child:const Text('Go back ',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.blue,

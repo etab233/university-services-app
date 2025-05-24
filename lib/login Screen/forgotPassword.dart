@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'codeVerification.dart';
 
 class ForgotPassword extends StatefulWidget {
-  ForgotPassword({Key? key}) : super(key: key);
+  const ForgotPassword({Key? key}) : super(key: key);
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
 }
@@ -13,7 +13,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(
+        padding:const EdgeInsets.only(
           left: 25,
         ),
         child: Column(
@@ -49,13 +49,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   labelText: "mobile number",
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xff000000))),
-                  focusedBorder: OutlineInputBorder(
+                      borderSide:const  BorderSide(color: Color(0xff000000))),
+                  focusedBorder:const  OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.blue,
                     ),
                   ),
-                  prefixIcon: Icon(
+                  prefixIcon:const Icon(
                     Icons.phone,
                     size: 28,
                     color: Colors.blue,
@@ -75,17 +75,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     MaterialPageRoute(builder: (context) => CodeVerification()),
                   );
                 },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    elevation: 20,
+                    padding:const EdgeInsets.all(22)),
                 child: const Text(
                   'Continue',
                   style: TextStyle(
                     fontSize: 20,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    elevation: 20,
-                    padding: EdgeInsets.all(22)),
               ),
             ),
             const SizedBox(
@@ -95,7 +95,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('back to Log in',
+              child:const Text('back to Log in',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.blue,

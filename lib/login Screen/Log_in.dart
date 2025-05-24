@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'forgotPassword.dart';
-import 'home.dart';
+import '../home Screen/home.dart';
 
 class Log_in extends StatefulWidget {
   const Log_in({Key? key}) : super(key: key);
@@ -12,15 +12,12 @@ class _Log_inState extends State<Log_in> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  void _showMessage(String s) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s)));
-  }
 
-  void _login() {
+  /*void _login() {
     String name = _nameController.text.trim();
     int? id = int.tryParse(_idController.text.trim());
     String password = _passwordController.text.trim();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,7 @@ class _Log_inState extends State<Log_in> {
               ),
               const Align(
                 alignment: Alignment.bottomLeft,
-                child: const Text(
+                child: Text(
                   "Here to Get \nWelcomed !",
                   style: TextStyle(
                     fontSize: 24,
@@ -54,13 +51,13 @@ class _Log_inState extends State<Log_in> {
                   labelText: "Username",
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xff000000))),
-                  focusedBorder: OutlineInputBorder(
+                      borderSide:const BorderSide(color: Color(0xff000000))),
+                  focusedBorder:const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.blue,
                     ),
                   ),
-                  prefixIcon: Icon(
+                  prefixIcon:const Icon(
                     Icons.person,
                     size: 28,
                     color: Colors.blue,
@@ -76,13 +73,13 @@ class _Log_inState extends State<Log_in> {
                   labelText: "Id Number",
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xff000000))),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                      borderSide:const BorderSide(color: Color(0xff000000))),
+                  focusedBorder:const OutlineInputBorder(
+                    borderSide:BorderSide(
                       color: Colors.blue,
                     ),
                   ),
-                  prefixIcon: Icon(
+                  prefixIcon:const Icon(
                     Icons.badge,
                     size: 28,
                     color: Colors.blue,
@@ -98,11 +95,11 @@ class _Log_inState extends State<Log_in> {
                   labelText: "Password",
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Color(0xff000000)),
+                    borderSide:const BorderSide(color: Color(0xff000000)),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder:const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.blue)),
-                  prefixIcon: Icon(
+                  prefixIcon:const Icon(
                     Icons.lock,
                     size: 28,
                     color: Colors.blue,
@@ -117,17 +114,17 @@ class _Log_inState extends State<Log_in> {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Home()));
                 },
-                child: const Text("Log in"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
-                  foregroundColor: Color(0xffffffff),
-                  textStyle: TextStyle(
+                  foregroundColor:const Color(0xffffffff),
+                  textStyle:const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                   elevation: 20,
-                  padding: EdgeInsets.all(20),
+                  padding:const EdgeInsets.all(20),
                 ),
+                child: const Text("Log in"),
               ),
               const SizedBox(
                 height: 10,
@@ -139,7 +136,7 @@ class _Log_inState extends State<Log_in> {
                       MaterialPageRoute(builder: (context) => ForgotPassword()),
                     );
                   },
-                  child: Text("forgot Password ?")),
+                  child:const Text("forgot Password ?")),
               Image.network(
                 width: 280,
                 height: 130,
