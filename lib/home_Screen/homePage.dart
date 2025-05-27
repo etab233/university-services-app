@@ -60,9 +60,9 @@ class _HomePageState extends State<HomePage> {
                   labelText: 'Search',
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
-                    borderSide:const BorderSide(color: Color(0xff000000)),
+                    borderSide: const BorderSide(color: Color(0xff000000)),
                   ),
-                  focusedBorder:const OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blue),
                   ),
                   prefixIcon: const Icon(Icons.search),
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 50),
               Expanded(
                 child: GridView.builder(
-                  gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 15,
                     mainAxisSpacing: 40,
@@ -105,7 +105,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Text(
                                 "${list[index]}",
-                                style:const TextStyle(
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),

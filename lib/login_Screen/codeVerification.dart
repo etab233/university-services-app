@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../home_Screen/home.dart';
 
 class CodeVerification extends StatefulWidget {
   CodeVerification({Key? key}) : super(key: key);
@@ -6,8 +9,38 @@ class CodeVerification extends StatefulWidget {
   _CodeVerificationState createState() => _CodeVerificationState();
 }
 
-class _CodeVerificationState extends State<CodeVerification> {
+class _CodeVerificationState extends State<CodeVerification>{
+  
   final TextEditingController _codeController = TextEditingController();
+  final _formkey= GlobalKey<FormState>();
+  bool isLoading=false;
+  Future<void> codeVer(String email) async{
+    if(_formkey.currentState!.validate()){
+      setState(() {
+        isLoading=true;});
+        final url=Uri.parse('https://api.example.com/api/codeVerification');
+    final response= await http.post(
+      url,
+      headers: {'Accept':'application/json'},
+      body:{
+        email:_codeController.text.trim(),
+      },
+    );
+    if(response.statusCode==200){
+      final data=json.decode(response.body);
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()));
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Incorrect code')),
+      );
+    }
+    setState(() {
+      isLoading=false;
+    });
+      }
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +48,9 @@ class _CodeVerificationState extends State<CodeVerification> {
         padding:const EdgeInsets.only(
           left: 25,
         ),
-        child: Column(
+        child: Form(
+          key: _formkey,
+          child: Column(
           //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
@@ -42,10 +77,14 @@ class _CodeVerificationState extends State<CodeVerification> {
             ),
             Container(
               width: 310,
-              child: TextField(
+              child: TextFormField(
                 controller: _codeController,
                 decoration: InputDecoration(
                   labelText: "code vervication",
+                  focusedErrorBorder:const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue)),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide:const BorderSide(color: Color(0xff000000))),
@@ -97,6 +136,7 @@ class _CodeVerificationState extends State<CodeVerification> {
                   )),
             ),
           ],
+        ),
         ),
       ),
     );

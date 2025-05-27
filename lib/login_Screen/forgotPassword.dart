@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'codeVerification.dart';
 
 class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({Key? key}) : super(key: key);
+  ForgotPassword({Key? key}) : super(key: key);
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  final TextEditingController _numberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final _formkey =GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +17,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         padding:const EdgeInsets.only(
           left: 25,
         ),
-        child: Column(
+        child: Form(
+          key: _formkey,
+          child: Column(
           //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
@@ -33,30 +36,38 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               height: 20,
             ),
             const Text(
-              'Enter your mobile number \nand we will send you a code ',
+              'Enter your email and \nwe will send you a code ',
               style: TextStyle(
                 fontSize: 20,
               ),
             ),
             const SizedBox(
-              height: 40,
+              height: 30,
             ),
             Container(
               width: 300,
-              child: TextField(
-                controller: _numberController,
+              child: TextFormField(
+                controller: _emailController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return "Enter your Email";
+                  if (!value.contains('@')) return "invalid Email";
+                  return null;
+                },
                 decoration: InputDecoration(
-                  labelText: "mobile number",
+                  labelText: "Email",
                   enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:const  BorderSide(color: Color(0xff000000))),
-                  focusedBorder:const  OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide:const BorderSide(color: Color(0xff000000)),
                   ),
+                  focusedBorder:const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue)),
+                  focusedErrorBorder:const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue)),
+                  errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue)),
                   prefixIcon:const Icon(
-                    Icons.phone,
+                    Icons.email,
                     size: 28,
                     color: Colors.blue,
                   ),
@@ -64,7 +75,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             Container(
               width: 300,
@@ -88,9 +99,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 20,),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -102,6 +111,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   )),
             ),
           ],
+        ),
         ),
       ),
     );
