@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/home%20Screen/home.dart';
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false);
-  }
-}
+import '../../home_Screen/home.dart';
+import '../../Constants.dart';
 
 class Objection extends StatefulWidget {
   const Objection({
@@ -39,7 +33,7 @@ class ObjectionState extends State<Objection> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: Constants.primaryColor,
           title: Text(
             "Your Objection",
             style: TextStyle(fontSize: 24),
@@ -49,7 +43,7 @@ class ObjectionState extends State<Objection> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Constants.primaryColor,
           unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
           iconSize: 30,
@@ -74,7 +68,7 @@ class ObjectionState extends State<Objection> {
             BottomNavigationBarItem(
               icon: Icon(Icons.person_2_outlined),
               label: 'profile',
-              activeIcon: Icon(Icons.person_2, color: Colors.blue),
+              activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
             ),
           ],
         ),
@@ -165,7 +159,7 @@ class ObjectionState extends State<Objection> {
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
-                    color: Colors.blue,
+                    color: Constants.primaryColor,
                     child: Text(
                       "Send Objection",
                       style: TextStyle(fontSize: 16, color: Colors.white),

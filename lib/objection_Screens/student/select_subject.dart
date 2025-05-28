@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:log_in/objection_Screen/student/submit_objection.dart';
+import 'submit_objection.dart';
 import 'package:http/http.dart' as http;
+import '../../Constants.dart';
 
 class SelectSub extends StatefulWidget {
   const SelectSub({super.key});
@@ -31,15 +32,15 @@ class _SelectSubState extends State<SelectSub> {
   bool EnableTerm = false;
   bool EnableButton = false;
   int _currentIndex = 0;
-  int? year;
-  int? term;
+  String? year;
+  String? term;
   String? subject;
   List<String> subjectlist = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.blue,
+            backgroundColor: Constants.primaryColor,
             title: Text("Grade Objection"),
             centerTitle: true,
             actions: [
@@ -50,7 +51,7 @@ class _SelectSubState extends State<SelectSub> {
             ]),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Constants.primaryColor,
           unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
           iconSize: 30,
@@ -75,7 +76,7 @@ class _SelectSubState extends State<SelectSub> {
             BottomNavigationBarItem(
               icon: Icon(Icons.person_2_outlined),
               label: 'profile',
-              activeIcon: Icon(Icons.person_2, color: Colors.blue),
+              activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
             ),
           ],
         ),
@@ -99,21 +100,21 @@ class _SelectSubState extends State<SelectSub> {
                   decoration: BoxDecoration(
                       color: Color.fromARGB(232, 255, 255, 255),
                       borderRadius: BorderRadius.circular(15)),
-                  child: DropdownButton<int>(
+                  child: DropdownButton<String>(
                     value: year,
                     hint: const Text("Select year"),
                     isExpanded: true,
                     items: [
-                      DropdownMenuItem<int>(
-                          value: 1, child: Text("First year")),
-                      DropdownMenuItem<int>(
-                          value: 2, child: Text("Second year")),
-                      DropdownMenuItem<int>(
-                          value: 3, child: Text("Third year")),
-                      DropdownMenuItem<int>(
-                          value: 4, child: Text("Fourth year")),
-                      DropdownMenuItem<int>(
-                          value: 5, child: Text("Fifth year")),
+                      DropdownMenuItem<String>(
+                          value: "first", child: Text("First year")),
+                      DropdownMenuItem<String>(
+                          value: "second", child: Text("Second year")),
+                      DropdownMenuItem<String>(
+                          value: "third", child: Text("Third year")),
+                      DropdownMenuItem<String>(
+                          value: "fourth", child: Text("Fourth year")),
+                      DropdownMenuItem<String>(
+                          value: "fifth", child: Text("Fifth year")),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -134,15 +135,15 @@ class _SelectSubState extends State<SelectSub> {
                   decoration: BoxDecoration(
                       color: Color.fromARGB(232, 255, 255, 255),
                       borderRadius: BorderRadius.circular(15)),
-                  child: DropdownButton<int>(
+                  child: DropdownButton<String>(
                     value: term,
                     hint: Text("Select term"),
                     isExpanded: true,
                     items: [
-                      DropdownMenuItem<int>(
-                          value: 1, child: Text("First term")),
-                      DropdownMenuItem<int>(
-                          value: 2, child: Text("Second term"))
+                      DropdownMenuItem<String>(
+                          value: "first", child: Text("First term")),
+                      DropdownMenuItem<String>(
+                          value: "second", child: Text("Second term"))
                     ],
                     onChanged: EnableTerm
                         ? (value) {

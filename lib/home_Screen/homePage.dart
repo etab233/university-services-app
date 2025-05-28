@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../objection_Screens/student/select_subject.dart';
+import '../announcment Screen/AnnList.dart';
+import '../Constants.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -63,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                     borderSide: const BorderSide(color: Color(0xff000000)),
                   ),
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
+                    borderSide: BorderSide(color: Constants.primaryColor),
                   ),
                   prefixIcon: const Icon(Icons.search),
                 ),
@@ -101,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                               Icon(
                                 icon[index],
                                 size: 30,
-                                color: Colors.blue,
+                                color: Constants.primaryColor,
                               ),
                               Text(
                                 "${list[index]}",
@@ -117,9 +120,25 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               IconButton(
-                                onPressed: () => print(1),
+                                onPressed: () {
+                                  setState(() {
+                                    if (index == 2) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SelectSub()));
+                                    } else if (index == 0) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AnnouncementList()));
+                                    }
+                                  });
+                                },
                                 icon: const Icon(Icons.add_circle,
-                                    size: 35, color: Colors.blue),
+                                    size: 35, color: Constants.primaryColor),
                               ),
                             ],
                           ),

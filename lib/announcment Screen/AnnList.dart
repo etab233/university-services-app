@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../Constants.dart';
 
 class Announcement {
   final String doctor_name;
@@ -77,7 +78,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
                       Navigator.pop(context);
                     },
                     icon: const Icon(Icons.arrow_back,
-                        size: 30, color: Colors.blue),
+                        size: 30, color: Constants.primaryColor),
                   ),
                 ),
                 body: Stack(children: [
@@ -125,7 +126,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
                               Row(
                                 children: [
                                   const Icon(Icons.person,
-                                      size: 20, color: Colors.blue),
+                                      size: 20, color: Constants.primaryColor),
                                   const SizedBox(
                                     height: 10,
                                   ),

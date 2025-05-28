@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homePage.dart';
+import '../Constants.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -38,7 +39,7 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Constants.primaryColor,
         unselectedItemColor: Colors.black,
         showUnselectedLabels: true,
         iconSize: 30,
@@ -63,7 +64,7 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person_2_outlined),
             label: 'profile',
-            activeIcon: Icon(Icons.person_2, color: Colors.blue),
+            activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
           ),
         ],
       ),
