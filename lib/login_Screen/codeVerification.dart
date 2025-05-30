@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../home_Screen/home.dart';
+import '../home_Screen/homePage.dart';
 import '../Constants.dart';
 
 class CodeVerification extends StatefulWidget {
@@ -30,7 +30,7 @@ class _CodeVerificationState extends State<CodeVerification> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Home()));
+            context, MaterialPageRoute(builder: (context) => HomePage()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Incorrect code')),

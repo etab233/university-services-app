@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'forgotPassword.dart';
 import '../AuthService.dart';
-import '../home_Screen/home.dart';
+import '../home_Screen/homePage.dart';
 import '../Constants.dart';
 
 class Log_in extends StatefulWidget {
@@ -199,7 +199,7 @@ class _Log_inState extends State<Log_in> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Home()));
+                                        builder: (context) => HomePage()));
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
