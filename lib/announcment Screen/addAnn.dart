@@ -13,7 +13,7 @@ class AddAnnouncement extends StatefulWidget {
 
 class _AddAnnouncementState extends State<AddAnnouncement> {
   final _AddController = TextEditingController();
-  final url=Uri.parse('http://your-laravel-backend.com/api/user-profile/123');
+  final url = Uri.parse('http://your-laravel-backend.com/api/user-profile/123');
   String? name;
   String? profile_img_url;
   DateTime? date;
@@ -23,59 +23,53 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
     fetchData();
   }
 
-  Future<void> fetchData() async{
-    try{
-      final response =await http.get(url);
-      if(response.statusCode == 200){
-        final data= json.decode(response.body);
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
         setState(() {
-          name=data['name'];
-          profile_img_url=data['imageProfile'];
-          date=DateTime.parse(data['date']);
+          name = data['name'];
+          profile_img_url = data['imageProfile'];
+          date = DateTime.parse(data['date']);
+        });
+      } else {
+        setState(() {
+          name = null;
+          profile_img_url = null;
+          date = null;
         });
       }
-      else{
-        setState(() {
-          name=null;
-          profile_img_url=null;
-          date=null;
-        });
-      }
-    }catch(e){
-        print("Error fetching user profile: $e");
-      }
-  }
-  
-Future<void> publish() async{
-  final postUrl = Uri.parse('http://your-laravel-backend.com/api/announcements');
-  final content =_AddController.text;
-  if(content.trim().isEmpty){
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text("please write your announcement before publish"))
-    );
-  }
-  else{
-    try{
-      final response=await http.post(
-        postUrl,
-        headers: {'Content-Type': 'application/json',},
-        body: {
-          'content':_AddController,
-          'date': DateTime.now(),
-          
-        }
-      );
-
+    } catch (e) {
+      print("Error fetching user profile: $e");
     }
   }
-}
+
+  Future<void> publish() async {
+    final postUrl =
+        Uri.parse('http://your-laravel-backend.com/api/announcements');
+    final content = _AddController.text;
+    if (content.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:
+              const Text("please write your announcement before publish")));
+    } else {
+      // try{
+      final response = await http.post(postUrl, headers: {
+        'Content-Type': 'application/json',
+      }, body: {
+        'content': _AddController,
+        'date': DateTime.now(),
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor:const Color(0xff00bbd4),
+        backgroundColor: const Color(0xff00bbd4),
         appBar: AppBar(
           title: const Text(
             "What's new ?",
@@ -110,15 +104,19 @@ Future<void> publish() async{
                     ],
                   ),
                   child: Padding(
-                    padding:const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
                         Row(
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              backgroundImage: profile_img_url != null? NetworkImage(profile_img_url !) : null,
-                              child: profile_img_url == null? const Icon(Icons.person) :null ,
+                              backgroundImage: profile_img_url != null
+                                  ? NetworkImage(profile_img_url!)
+                                  : null,
+                              child: profile_img_url == null
+                                  ? const Icon(Icons.person)
+                                  : null,
                             ),
                             const SizedBox(
                               width: 15,
@@ -127,12 +125,12 @@ Future<void> publish() async{
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("$name",
-                                    style:const TextStyle(fontSize: 20)),
-                                 Text(
+                                    style: const TextStyle(fontSize: 20)),
+                                Text(
                                   date != null
-  ? DateFormat('dd/MM/yyyy').format(date!)
-  : '',
-                                  style:const TextStyle(
+                                      ? DateFormat('dd/MM/yyyy').format(date!)
+                                      : '',
+                                  style: const TextStyle(
                                       color: Colors.grey, fontSize: 14),
                                 )
                               ],
@@ -167,7 +165,7 @@ Future<void> publish() async{
                 height: 20,
               ),
               Padding(
-                padding:const EdgeInsets.only(right: 17),
+                padding: const EdgeInsets.only(right: 17),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

@@ -179,40 +179,40 @@ class _Log_inState extends State<Log_in> {
                         width: 140,
                         height: 45,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formkey.currentState!.validate()) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              try {
-                                final id = _idController.text.trim();
-                                final password =
-                                    _passwordController.text.trim();
-                                final email = _emailController.text.trim();
-                                final token = await AuthService.login(
-                                    id, password, email);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Welcome !"),
-                                  ),
-                                );
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()));
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Error : $e"),
-                                    backgroundColor: Constants.primaryColor,
-                                    showCloseIcon: true,
-                                  ),
-                                );
-                              } finally {
-                                setState(() => isLoading = false);
-                              }
-                            }
-                          },
+                          onPressed: () => // async {
+                              // if (_formkey.currentState!.validate()) {
+                              //   setState(() {
+                              //     isLoading = true;
+                              //   });
+                              // try {
+                              //   final id = _idController.text.trim();
+                              //   final password =
+                              //       _passwordController.text.trim();
+                              //   final email = _emailController.text.trim();
+                              //   final token = await AuthService.login(
+                              //       id, password, email);
+                              //   ScaffoldMessenger.of(context).showSnackBar(
+                              //     const SnackBar(
+                              //       content: Text("Welcome !"),
+                              //     ),
+                              //   );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage())),
+                          // } catch (e) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //       content: Text("Error : $e"),
+                          //       backgroundColor: Constants.primaryColor,
+                          //       showCloseIcon: true,
+                          //     ),
+                          //   );
+                          // } finally {
+                          //   setState(() => isLoading = false);
+                          // }
+                          //   }
+                          // },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Constants.primaryColor,
                             foregroundColor: Color(0xffffffff),
