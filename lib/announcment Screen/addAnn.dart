@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 void main() => runApp(AddAnnouncement());
 
@@ -10,6 +13,63 @@ class AddAnnouncement extends StatefulWidget {
 
 class _AddAnnouncementState extends State<AddAnnouncement> {
   final _AddController = TextEditingController();
+  final url=Uri.parse('http://your-laravel-backend.com/api/user-profile/123');
+  String? name;
+  String? profile_img_url;
+  DateTime? date;
+
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async{
+    try{
+      final response =await http.get(url);
+      if(response.statusCode == 200){
+        final data= json.decode(response.body);
+        setState(() {
+          name=data['name'];
+          profile_img_url=data['imageProfile'];
+          date=DateTime.parse(data['date']);
+        });
+      }
+      else{
+        setState(() {
+          name=null;
+          profile_img_url=null;
+          date=null;
+        });
+      }
+    }catch(e){
+        print("Error fetching user profile: $e");
+      }
+  }
+  
+Future<void> publish() async{
+  final postUrl = Uri.parse('http://your-laravel-backend.com/api/announcements');
+  final content =_AddController.text;
+  if(content.trim().isEmpty){
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: const Text("please write your announcement before publish"))
+    );
+  }
+  else{
+    try{
+      final response=await http.post(
+        postUrl,
+        headers: {'Content-Type': 'application/json',},
+        body: {
+          'content':_AddController,
+          'date': DateTime.now(),
+          
+        }
+      );
+
+    }
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,26 +113,26 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
                     padding:const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        const Row(
+                        Row(
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              child: Icon(
-                                Icons.person,
-                                size: 35,
-                              ),
+                              backgroundImage: profile_img_url != null? NetworkImage(profile_img_url !) : null,
+                              child: profile_img_url == null? const Icon(Icons.person) :null ,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("name",
-                                    style: TextStyle(fontSize: 20)),
+                                Text("$name",
+                                    style:const TextStyle(fontSize: 20)),
                                  Text(
-                                  "22/8/2025.",
-                                  style: TextStyle(
+                                  date != null
+  ? DateFormat('dd/MM/yyyy').format(date!)
+  : '',
+                                  style:const TextStyle(
                                       color: Colors.grey, fontSize: 14),
                                 )
                               ],
