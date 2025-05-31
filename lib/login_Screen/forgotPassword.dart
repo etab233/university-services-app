@@ -36,18 +36,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  'Enter your email and \nwe will send you a code ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
+                Container(
+                  width: 350,
+                  child: const Text(
+                    "Please enter your email address. We'll send you a code to reset your password.",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Container(
-                  width: 300,
+                  width: 350,
                   child: TextFormField(
                     controller: _emailController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -81,10 +83,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Container(
-                  width: 300,
+                  width: 350,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
@@ -111,7 +113,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   height: 15,
                 ),
                 Container(
-                  width: 300,
+                  width: 350,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {

@@ -60,84 +60,101 @@ class _NewPasswordState extends State<NewPassword> {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            key: _formkey,
+        child: Form(
+          key: _formkey,
+          child: Center(
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Create a new password that differing from a previous one",
-                  style: TextStyle(fontSize: 20),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: 350,
+                  child: Text(
+                    "Create a new password that differing from a previous one",
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Enter your password";
-                    }
-                    if (value.length < 8) {
-                      return "at least 8 characters";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Password",
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xff000000)),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    focusedErrorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    errorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      size: 28,
-                      color: Constants.primaryColor,
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Enter your password";
+                      }
+                      if (value.length < 8) {
+                        return "at least 8 characters";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xff000000)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      focusedErrorBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      errorBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        size: 28,
+                        color: Constants.primaryColor,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: true,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Confirm your password";
-                    }
-                    if (value != _passwordController.text) {
-                      return "Passwords do not match. Please try again";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Confirm Password",
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xff000000)),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    focusedErrorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    errorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Constants.primaryColor)),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      size: 28,
-                      color: Constants.primaryColor,
+                Container(
+                  width: 350,
+                  child: TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Confirm your password";
+                      }
+                      if (value != _passwordController.text) {
+                        return "Passwords do not match. Please try again";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Confirm Password",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Color(0xff000000)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      focusedErrorBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      errorBorder: const OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Constants.primaryColor)),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        size: 28,
+                        color: Constants.primaryColor,
+                      ),
                     ),
                   ),
                 ),
@@ -147,8 +164,8 @@ class _NewPasswordState extends State<NewPassword> {
                 isLoading
                     ? const CircularProgressIndicator()
                     : Container(
-                        width: 190,
-                        height: 40,
+                        width: 350,
+                        height: 50,
                         child: ElevatedButton(
                           onPressed: () async {
                             // if (_formkey.currentState!.validate()) {
@@ -175,8 +192,8 @@ class _NewPasswordState extends State<NewPassword> {
                   height: 15,
                 ),
                 Container(
-                  width: 190,
-                  height: 40,
+                  width: 350,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
