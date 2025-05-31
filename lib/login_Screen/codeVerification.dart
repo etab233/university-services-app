@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../home_Screen/homePage.dart';
+import 'package:log_in/login_Screen/createNewPassword.dart';
 import '../Constants.dart';
 
 class CodeVerification extends StatefulWidget {
@@ -14,7 +14,14 @@ class _CodeVerificationState extends State<CodeVerification> {
   final TextEditingController _codeController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isLoading = false;
-  Future<void> codeVer(String email) async {
+  bool isEnabled = false;
+  void validateInput(String value) {
+    setState(() {
+      isEnabled = value.isNotEmpty && int.tryParse(value) != null;
+    });
+  }
+
+  Future<void> codeVer(int code) async {
     if (_formkey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -24,13 +31,13 @@ class _CodeVerificationState extends State<CodeVerification> {
         url,
         headers: {'Accept': 'application/json'},
         body: {
-          email: _codeController.text.trim(),
+          code: _codeController.text.trim(),
         },
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => NewPassword()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Incorrect code')),
@@ -67,54 +74,74 @@ class _CodeVerificationState extends State<CodeVerification> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  'You have received a code\n copy it here please!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
                 Container(
-                  width: 310,
-                  child: TextFormField(
-                    controller: _codeController,
-                    decoration: InputDecoration(
-                      labelText: "Verfication Code",
-                      focusedErrorBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Constants.primaryColor)),
-                      errorBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Constants.primaryColor)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Color(0xff000000))),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Constants.primaryColor,
-                        ),
-                      ),
+                  width: 350,
+                  child: const Text(
+                    "We've sent a verification code to you. Please enter it below",
+                    style: TextStyle(
+                      fontSize: 18,
                     ),
                   ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 20,
                 ),
                 Container(
-                  width: 310,
+                  width: 350,
+                  child: TextFormField(
+                      controller: _codeController,
+                      onChanged: validateInput,
+                      decoration: InputDecoration(
+                          labelText: "Verfication Code",
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Constants.primaryColor)),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Constants.primaryColor)),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  const BorderSide(color: Color(0xff000000))),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Constants.primaryColor,
+                            ),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.numbers,
+                            size: 28,
+                            color: Colors.blue,
+                          )),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      keyboardType: TextInputType.number,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter verification code";
+                        }
+                        if (int.tryParse(value) == null) {
+                          return "Please Enter a valid input";
+                        }
+                        return null;
+                      }),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  width: 350,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CodeVerification(),
-                          ));
-                    },
+                    onPressed: isEnabled
+                        ? () {
+                            if (_formkey.currentState?.validate() ?? false) {
+                              codeVer(
+                                  int.tryParse(_codeController.text.trim())!);
+                            }
+                          }
+                        : null,
+
+                    // : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Constants.primaryColor,
                       foregroundColor: Colors.white,
@@ -132,7 +159,7 @@ class _CodeVerificationState extends State<CodeVerification> {
                   height: 15,
                 ),
                 Container(
-                  width: 310,
+                  width: 350,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
