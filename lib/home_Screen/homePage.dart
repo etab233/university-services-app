@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../objection_Screens/student/select_subject.dart';
 import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
+import '../bottom_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -26,7 +27,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: const Padding(
+          padding: EdgeInsets.only(top: 28),
+          child: Text(
+            'Latakia University',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      body: Stack(
       children: [
         Positioned.fill(
           child: Column(
@@ -152,6 +168,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ],
+    ),
+    bottomNavigationBar: Bottom_navigation_bar(),
     );
   }
 }

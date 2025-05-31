@@ -41,12 +41,12 @@ class _SelectSubState extends State<SelectSub> {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Constants.primaryColor,
-            title: Text("Grade Objection"),
+            title:const Text("Grade Objection"),
             centerTitle: true,
             actions: [
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.settings),
+                icon:const  Icon(Icons.settings),
               ),
             ]),
         bottomNavigationBar: BottomNavigationBar(
@@ -84,7 +84,7 @@ class _SelectSubState extends State<SelectSub> {
           child: Container(
             padding:
                 const EdgeInsets.only(left: 20, right: 20, top: 0, bottom: 30),
-            margin: EdgeInsets.all(20),
+            margin:const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               color: const Color.fromARGB(255, 157, 205, 231),
@@ -92,19 +92,19 @@ class _SelectSubState extends State<SelectSub> {
             alignment: Alignment.center,
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Container(
                   padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(232, 255, 255, 255),
+                      color:const Color.fromARGB(232, 255, 255, 255),
                       borderRadius: BorderRadius.circular(15)),
                   child: DropdownButton<String>(
                     value: year,
                     hint: const Text("Select year"),
                     isExpanded: true,
-                    items: [
+                    items:const [
                       DropdownMenuItem<String>(
                           value: "first", child: Text("First year")),
                       DropdownMenuItem<String>(
@@ -127,19 +127,19 @@ class _SelectSubState extends State<SelectSub> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Container(
-                  padding: EdgeInsets.only(right: 10, left: 10, top: 10),
+                  padding:const EdgeInsets.only(right: 10, left: 10, top: 10),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(232, 255, 255, 255),
+                      color:const Color.fromARGB(232, 255, 255, 255),
                       borderRadius: BorderRadius.circular(15)),
                   child: DropdownButton<String>(
                     value: term,
-                    hint: Text("Select term"),
+                    hint:const Text("Select term"),
                     isExpanded: true,
-                    items: [
+                    items:const [
                       DropdownMenuItem<String>(
                           value: "first", child: Text("First term")),
                       DropdownMenuItem<String>(
@@ -157,17 +157,17 @@ class _SelectSubState extends State<SelectSub> {
                         : null,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Container(
-                  padding: EdgeInsets.only(right: 10, left: 10, top: 10),
+                  padding:const EdgeInsets.only(right: 10, left: 10, top: 10),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(232, 255, 255, 255),
+                      color:const Color.fromARGB(232, 255, 255, 255),
                       borderRadius: BorderRadius.circular(15)),
                   child: DropdownButton<String>(
                     value: subject,
-                    hint: Text("Select subject"),
+                    hint:const  Text("Select subject"),
                     isExpanded: true,
                     items: subjectlist
                         .map((e) =>
@@ -181,7 +181,7 @@ class _SelectSubState extends State<SelectSub> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 ElevatedButton(
@@ -194,7 +194,7 @@ class _SelectSubState extends State<SelectSub> {
                             );
                           }
                         : null,
-                    child: Text(
+                    child:const  Text(
                       "Continue",
                       style: TextStyle(color: Colors.black),
                     ))

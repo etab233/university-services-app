@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../home_Screen/home.dart';
+import '../../home_Screen/homePage.dart';
 import '../../Constants.dart';
+import '../../bottom_navigation_bar.dart';
 
 class Objection extends StatefulWidget {
   const Objection({
@@ -26,7 +27,6 @@ class ObjectionState extends State<Objection> {
         .showSnackBar(SnackBar(content: Text("Objection Submitted")));
   }
 
-  int _currentIndex = 0;
   //getting the duration value from the backend
   int duration = 5;
   @override
@@ -34,46 +34,16 @@ class ObjectionState extends State<Objection> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.primaryColor,
-          title: Text(
+          title:const Text(
             "Your Objection",
             style: TextStyle(fontSize: 24),
           ),
           centerTitle: true,
-          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.settings))],
+          actions: [IconButton(onPressed: () {}, icon:const Icon(Icons.settings))],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          selectedItemColor: Constants.primaryColor,
-          unselectedItemColor: Colors.black,
-          showUnselectedLabels: true,
-          iconSize: 30,
-          type: BottomNavigationBarType.fixed,
-          landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'home',
-              activeIcon: Icon(Icons.home),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined),
-              label: 'add',
-              activeIcon: Icon(Icons.add),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_2_outlined),
-              label: 'profile',
-              activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
-            ),
-          ],
-        ),
+        bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding:const EdgeInsets.all(20),
           child: Column(children: [
             Container(
               height: 50,
@@ -89,7 +59,7 @@ class ObjectionState extends State<Objection> {
                         borderRadius: BorderRadius.circular(15)),
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -107,7 +77,7 @@ class ObjectionState extends State<Objection> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -125,7 +95,7 @@ class ObjectionState extends State<Objection> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -135,18 +105,18 @@ class ObjectionState extends State<Objection> {
                     height: 45,
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                          MaterialPageRoute(builder: (context) => HomePage()));
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
-                    color: Color.fromARGB(255, 252, 184, 179),
-                    child: Text(
+                    color:const Color.fromARGB(255, 252, 184, 179),
+                    child:const Text(
                       "Cancel",
                       style: TextStyle(
                           fontSize: 16,
                           color: const Color.fromARGB(255, 247, 16, 0)),
                     )),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 MaterialButton(
@@ -155,25 +125,27 @@ class ObjectionState extends State<Objection> {
                       _SendObjection();
                       _showMessage();
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                          MaterialPageRoute(builder: (context) => HomePage()));
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     color: Constants.primaryColor,
-                    child: Text(
+                    child:const Text(
                       "Send Objection",
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     )),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
               "$duration days left",
               textAlign: TextAlign.center,
             ),
-          ]),
-        ));
+          ]
+          ),
+        )
+        );
   }
 }
