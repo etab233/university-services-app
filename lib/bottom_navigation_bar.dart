@@ -3,8 +3,8 @@ import 'package:log_in/objection_Screens/student/submit_objection.dart';
 import 'package:log_in/profile/myprofile.dart';
 import './home_Screen/homePage.dart';
 
-void _navigateToPage(BuildContext context, int index, List x) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => x[index]));
+void _navigateToPage(BuildContext context, int index, List widgets) {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => widgets[index]));
 }
 
 class Bottom_navigation_bar extends StatefulWidget {
@@ -14,7 +14,7 @@ class Bottom_navigation_bar extends StatefulWidget {
 }
 
 class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
-  List Widgets = [HomePage(), Objection(), MyProfile()];
+  List widgets = [HomePage(), Objection(), MyProfile()];
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -25,7 +25,7 @@ class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
       iconSize: 30,
       type: BottomNavigationBarType.fixed,
       landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-      onTap: (index) => _navigateToPage(context, index, Widgets),
+      onTap: (index) => _navigateToPage(context, index, widgets),
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),

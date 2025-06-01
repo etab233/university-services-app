@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'submit_objection.dart';
 import 'package:http/http.dart' as http;
+import 'package:log_in/objection_Screens/admin/view_objection.dart';
 import '../../Constants.dart';
 
-class SelectSub extends StatefulWidget {
-  const SelectSub({super.key});
+class ChooseSub extends StatefulWidget {
+  const ChooseSub({super.key});
 
   @override
-  State<SelectSub> createState() => _SelectSubState();
+  State<ChooseSub> createState() => _ChooseSubState();
 }
 
-class _SelectSubState extends State<SelectSub> {
+class _ChooseSubState extends State<ChooseSub> {
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
     final response = await http.get(Uri.parse('here the backend url'));
@@ -190,7 +190,7 @@ class _SelectSubState extends State<SelectSub> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Objection()),
+                                  builder: (context) => ViewObjections()),
                             );
                           }
                         : null,

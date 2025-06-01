@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:log_in/login_Screen/createNewPassword.dart';
-// import 'package:changepassword/changepassword.dart';
 import 'profileservice.dart';
 import 'profileimage.dart';
 
