@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:log_in/bottom_navigation_bar.dart';
+import 'notifications.dart';
 
 void main() => runApp(AddAnnouncement());
 
@@ -18,6 +20,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   String? profile_img_url;
   DateTime? date;
 
+  @override
   void initState() {
     super.initState();
     fetchData();
@@ -31,7 +34,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         setState(() {
           name=data['name'];
           profile_img_url=data['imageProfile'];
-          date=DateTime.parse(data['date']);
+          date=DateTime.parse(data['created_at']);
         });
       }
       else{
@@ -47,7 +50,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   }
   
 Future<void> publish() async{
-  final postUrl = Uri.parse('http://your-laravel-backend.com/api/announcements');
+  final postUrl = Uri.parse('https://jsonplaceholder.typicode.com/posts');
   final content =_AddController.text;
   if(content.trim().isEmpty){
     ScaffoldMessenger.of(context).showSnackBar(
@@ -59,17 +62,32 @@ Future<void> publish() async{
       final response=await http.post(
         postUrl,
         headers: {'Content-Type': 'application/json',},
-        body: {
-          'content':_AddController,
-          'date': DateTime.now(),
-          
+        body: json.encode(
+           {
+          'content': content,
+          'date': DateTime.now().toIso8601String(),
+          'userID':1,
+        }),
+        );
+        if(response.statusCode == 200 || response.statusCode ==201){
+          ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text("Published Successfully !"))
+          );
+          _AddController.clear();
         }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(
+          const  SnackBar(content: Text("Failed to publish"))
+          );
+        }
+    }catch (e) {
+      //print("Error while publishing: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("An error occurred while publishing"))
       );
-
     }
   }
 }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -89,6 +107,18 @@ Future<void> publish() async{
             Icons.campaign,
             size: 30,
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.notifications, size: 30),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Notifications(),
+                    ));
+              },
+            ),
+          ],
           backgroundColor: Colors.cyan,
         ),
         body: SingleChildScrollView(
@@ -173,7 +203,29 @@ Future<void> publish() async{
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        print(";");
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context){
+                            return  AlertDialog(
+                              content:const Text("Delete this Announcement ?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child:const Text("Yes"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    publish();
+                                  },
+                                  child:const Text("No"),
+                                ),
+                              ],
+                            );
+                          }
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -190,7 +242,29 @@ Future<void> publish() async{
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        print(";");
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context){
+                            return  AlertDialog(
+                              content:const Text("Are you sure you want to publish this announcement"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child:const Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    publish();
+                                  },
+                                  child:const Text("Yes"),
+                                ),
+                              ],
+                            );
+                          }
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -208,6 +282,7 @@ Future<void> publish() async{
             ],
           ),
         ),
+        bottomNavigationBar: Bottom_navigation_bar(),
       ),
     );
   }
