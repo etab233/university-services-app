@@ -35,7 +35,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
 
   Future<void> fetchAnnouncement() async {
     final url =
-        Uri.parse('http://api.com/api/announcements'); // استبدل بالرابط الحقيقي
+        Uri.parse('${Constants.baseUrl}/api/announcements');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:log_in/bottom_navigation_bar.dart';
+import '../Constants.dart';
+import '../bottom_navigation_bar.dart';
 import 'notifications.dart';
 
 void main() => runApp(AddAnnouncement());
@@ -15,7 +16,7 @@ class AddAnnouncement extends StatefulWidget {
 
 class _AddAnnouncementState extends State<AddAnnouncement> {
   final _AddController = TextEditingController();
-  final url = Uri.parse('http://your-laravel-backend.com/api/user-profile/123');
+  final url = Uri.parse('${Constants.baseUrl}/api/addann');
   String? name;
   String? profile_img_url;
   DateTime? date;
@@ -49,7 +50,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   }
 
   Future<void> publish() async {
-    final postUrl = Uri.parse('https://jsonplaceholder.typicode.com/posts');
+    final postUrl = Uri.parse('${Constants.baseUrl}/api/announce');
     final content = _AddController.text;
     if (content.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

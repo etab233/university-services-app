@@ -1,10 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:log_in/Constants.dart';
+
 class AuthService {
-  static final baseUrl = 'https://api.example.com/api';
   static Future<String> login(String id, String password, String email) async {
-    final url = Uri.parse('$baseUrl/login');
+    final url = Uri.parse('${Constants.baseUrl}/api/login');
     final response = await http.post(url, headers: {
       'Accept': 'application/json'
     }, body: {

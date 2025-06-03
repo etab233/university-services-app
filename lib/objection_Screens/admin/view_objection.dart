@@ -3,14 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../Constants.dart';
 
-class Announcement {
+class Objections {
   final String student_name;
   final String date;
   final String content;
-  Announcement(
+  Objections(
       {required this.student_name, required this.date, required this.content});
-  factory Announcement.fromJson(Map<String, dynamic> json) {
-    return Announcement(
+  factory Objections.fromJson(Map<String, dynamic> json) {
+    return Objections(
       student_name: json['student_name'],
       date: json['date'],
       content: json['content'],
@@ -25,24 +25,23 @@ class ViewObjections extends StatefulWidget {
 }
 
 class _ViewObjectionsState extends State<ViewObjections> {
-  List<Announcement> objections = [];
+  List<Objections> objections = [];
   bool isLoading = true;
   @override
   void initState() {
     super.initState();
-    fetchAnnouncement();
+    fetchObjections();
   }
 
-  Future<void> fetchAnnouncement() async {
-    final url =
-        Uri.parse('http://api.com/api/objections'); // استبدل بالرابط الحقيقي
+  Future<void> fetchObjections() async {
+    final url = Uri.parse('${Constants.baseUrl}/api/objections');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final List jsonData = json.decode(response.body);
         setState(() {
           objections =
-              jsonData.map((item) => Announcement.fromJson(item)).toList();
+              jsonData.map((item) => Objections.fromJson(item)).toList();
           isLoading = false;
         });
       } else {
@@ -62,14 +61,14 @@ class _ViewObjectionsState extends State<ViewObjections> {
         ? Center(child: CircularProgressIndicator())
         : objections.isEmpty
             ? Center(
-                child: Text('No Announcement'),
+                child: Text('No Objections'),
               )
             : Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
                   //automaticallyImplyLeading: false,
                   title: const Text(
-                    'Announcement',
+                    'Objections',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   backgroundColor: Colors.white,

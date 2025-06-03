@@ -14,7 +14,8 @@ class ChooseSub extends StatefulWidget {
 class _ChooseSubState extends State<ChooseSub> {
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
-    final response = await http.get(Uri.parse('here the backend url'));
+    final response =
+        await http.get(Uri.parse('${Constants.baseUrl}/api/objections'));
 
     if (response.statusCode == 200) {
       setState(() {
