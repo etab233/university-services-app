@@ -15,7 +15,7 @@ class _SelectSubState extends State<SelectSub> {
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
     final response =
-        await http.get(Uri.parse('${Constants.baseUrl}/api/objections'));
+        await http.get(Uri.parse('${Constants.baseUrl}/objections'));
 
     if (response.statusCode == 200) {
       setState(() {

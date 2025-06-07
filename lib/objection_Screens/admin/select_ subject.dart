@@ -15,7 +15,7 @@ class _ChooseSubState extends State<ChooseSub> {
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
     final response =
-        await http.get(Uri.parse('${Constants.baseUrl}/api/objections'));
+        await http.get(Uri.parse('${Constants.baseUrl}/objections'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -191,7 +191,8 @@ class _ChooseSubState extends State<ChooseSub> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ViewObjections()),
+                                  builder: (context) =>
+                                      ViewObjections(subject!)),
                             );
                           }
                         : null,

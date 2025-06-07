@@ -22,7 +22,7 @@ class _NewPasswordState extends State<NewPassword> {
       setState(() {
         isLoading = true;
       });
-      final url = Uri.parse('https://api.example.com/api/codeVerification');
+      final url = Uri.parse('${Constants.baseUrl}/codeVerification');
       final response = await http.post(url,
           headers: {'Accept': 'application/json'},
           body: json.encode(

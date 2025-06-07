@@ -16,7 +16,7 @@ class AddAnnouncement extends StatefulWidget {
 
 class _AddAnnouncementState extends State<AddAnnouncement> {
   final _AddController = TextEditingController();
-  final url = Uri.parse('${Constants.baseUrl}/api/addann');
+  final url = Uri.parse('${Constants.baseUrl}/addann');
   String? name;
   String? profile_img_url;
   DateTime? date;

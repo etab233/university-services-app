@@ -4,22 +4,23 @@ import 'dart:convert';
 import '../../Constants.dart';
 
 class Objections {
+  final int student_id;
   final String student_name;
+  final int grade;
+  final String test_hall;
+  final String lecturer_name;
   final String date;
-  final String content;
-  Objections(
-      {required this.student_name, required this.date, required this.content});
+  Objections(this.student_id, this.student_name, this.grade, this.test_hall,
+      this.lecturer_name, this.date);
   factory Objections.fromJson(Map<String, dynamic> json) {
-    return Objections(
-      student_name: json['student_name'],
-      date: json['date'],
-      content: json['content'],
-    );
+    return Objections(json['student_id'], json['student_name'], json['grade'],
+        json['test_hall'], json['lecturer_name'], json['date']);
   }
 }
 
 class ViewObjections extends StatefulWidget {
-  ViewObjections({Key? key}) : super(key: key);
+  final String subject;
+  const ViewObjections(this.subject);
   @override
   _ViewObjectionsState createState() => _ViewObjectionsState();
 }
@@ -34,7 +35,7 @@ class _ViewObjectionsState extends State<ViewObjections> {
   }
 
   Future<void> fetchObjections() async {
-    final url = Uri.parse('${Constants.baseUrl}/api/objections');
+    final url = Uri.parse('${Constants.baseUrl}/objections');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -58,19 +59,21 @@ class _ViewObjectionsState extends State<ViewObjections> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : objections.isEmpty
-            ? Center(
+            ? const Center(
                 child: Text('No Objections'),
               )
             : Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
                   //automaticallyImplyLeading: false,
-                  title: const Text(
-                    'Objections',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  title: Text(
+                    "${widget.subject} Objections",
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
                   ),
+                  centerTitle: true,
                   backgroundColor: Colors.white,
                   leading: IconButton(
                     onPressed: () {
@@ -86,7 +89,7 @@ class _ViewObjectionsState extends State<ViewObjections> {
                       children: [
                         Expanded(
                             flex: 3,
-                            child: Container(color: Color(0xffffffff))),
+                            child: Container(color: const Color(0xffffffff))),
                         Expanded(
                           flex: 7,
                           child: Container(
@@ -113,43 +116,140 @@ class _ViewObjectionsState extends State<ViewObjections> {
                       itemBuilder: (content, index) {
                         final item = objections[index];
                         return Container(
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(17),
-                            border: Border.all(color: Colors.black),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
+                            margin: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              boxShadow: const [
+                                BoxShadow(
+                                    blurRadius: 5,
+                                    offset: Offset.zero,
+                                    color: Colors.black)
+                              ],
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(17),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.person,
-                                      size: 20, color: Constants.primaryColor),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.person,
+                                          size: 20,
+                                          color: Constants.primaryColor),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        item.student_name,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        item.date,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[600]),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  ),
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  Text(
-                                    item.student_name,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      const Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "id:",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "grade:",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "lecturer name:",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "test hall:",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ]),
+                                      Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "${item.student_id}",
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              "${item.grade}",
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              item.lecturer_name,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              item.test_hall,
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ])
+                                    ],
                                   ),
-                                  Spacer(),
-                                  Text(
-                                    item.date,
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(item.content, textAlign: TextAlign.right),
-                            ],
-                          ),
-                        );
+                                ]));
                       },
                     ),
                   ),

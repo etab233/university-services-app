@@ -26,7 +26,7 @@ class _CodeVerificationState extends State<CodeVerification> {
       setState(() {
         isLoading = true;
       });
-      final url = Uri.parse('https://api.example.com/api/codeVerification');
+      final url = Uri.parse('${Constants.baseUrl}/codeVerification');
       final response = await http.post(
         url,
         headers: {'Accept': 'application/json'},

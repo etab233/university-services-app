@@ -5,7 +5,7 @@ import 'package:log_in/Constants.dart';
 
 class AuthService {
   static Future<String> login(String id, String password, String email) async {
-    final url = Uri.parse('${Constants.baseUrl}/api/login');
+    final url = Uri.parse('${Constants.baseUrl}/login');
     final response = await http.post(url, headers: {
       'Accept': 'application/json'
     }, body: {
