@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../Constants.dart';
 
@@ -66,6 +67,7 @@ class _ViewObjectionsState extends State<ViewObjections> {
               )
             : Scaffold(
                 backgroundColor: Colors.white,
+                bottomNavigationBar: Bottom_navigation_bar(),
                 appBar: AppBar(
                   //automaticallyImplyLeading: false,
                   title: Text(

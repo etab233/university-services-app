@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:log_in/bottom_navigation_bar.dart';
 import 'submit_objection.dart';
 import 'package:http/http.dart' as http;
 import '../../Constants.dart';
@@ -55,37 +56,7 @@ class _SelectSubState extends State<SelectSub> {
           //   ),
           // ]
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          selectedItemColor: Constants.primaryColor,
-          unselectedItemColor: Colors.black,
-          showUnselectedLabels: true,
-          iconSize: 30,
-          type: BottomNavigationBarType.fixed,
-          landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'home',
-              activeIcon: Icon(Icons.home),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined),
-              label: 'add',
-              activeIcon: Icon(Icons.add),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_2_outlined),
-              label: 'profile',
-              activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
-            ),
-          ],
-        ),
+        bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
           child: Container(
             padding:

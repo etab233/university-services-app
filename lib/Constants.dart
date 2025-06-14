@@ -5,4 +5,6 @@ class Constants {
   static const String logo = "assets/imgs/logo.png";
   static const String university = "assets/imgs/university.png";
   static final baseUrl = 'http://127.0.0.1:8000/api';
+  // static String? role = null;
+  // static String? token = null;
 }

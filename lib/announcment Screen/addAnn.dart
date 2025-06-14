@@ -50,7 +50,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   }
 
   Future<void> publish() async {
-    final postUrl = Uri.parse('${Constants.baseUrl}/api/announce');
+    final postUrl = Uri.parse('${Constants.baseUrl}/announce');
     final content = _AddController.text;
     if (content.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -90,7 +90,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: const Color(0xff00bbd4),
+        //backgroundColor: const Color(0xff00bbd4),
         appBar: AppBar(
           title: const Text(
             "What's new ?",
@@ -126,6 +126,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
                   width: 320,
                   height: 400,
                   margin: const EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(17),
@@ -136,61 +137,58 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
                       ),
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: profile_img_url != null
-                                  ? NetworkImage(profile_img_url!)
-                                  : null,
-                              child: profile_img_url == null
-                                  ? const Icon(Icons.person)
-                                  : null,
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("$name",
-                                    style: const TextStyle(fontSize: 20)),
-                                Text(
-                                  date != null
-                                      ? DateFormat('dd/MM/yyyy').format(date!)
-                                      : '',
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 14),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: TextField(
-                              maxLength: 255,
-                              maxLines: null,
-                              expands: true,
-                              keyboardType: TextInputType.multiline,
-                              controller: _AddController,
-                              decoration: const InputDecoration(
-                                hintText: "Write Here",
-                                border: InputBorder.none,
-                              ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: profile_img_url != null
+                                ? NetworkImage(profile_img_url!)
+                                : null,
+                            child: profile_img_url == null
+                                ? const Icon(Icons.person)
+                                : null,
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("$name",
+                                  style: const TextStyle(fontSize: 20)),
+                              Text(
+                                date != null
+                                    ? DateFormat('dd/MM/yyyy').format(date!)
+                                    : '',
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 14),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: TextField(
+                            maxLength: 255,
+                            maxLines: null,
+                            expands: true,
+                            keyboardType: TextInputType.multiline,
+                            controller: _AddController,
+                            decoration: const InputDecoration(
+                              hintText: "Write Here",
+                              border: InputBorder.none,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

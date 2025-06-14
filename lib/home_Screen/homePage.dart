@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:log_in/announcment%20Screen/addAnn.dart';
+import 'package:log_in/complaint_Screen/add_complaint.dart';
 import '../objection_Screens/student/select_subject.dart';
 import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Bottom_navigation_bar(),
       appBar: AppBar(
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
@@ -100,8 +103,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: GridView.builder(
                     gridDelegate:
-                        const 
-                      SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 40,
@@ -149,18 +151,35 @@ class _HomePageState extends State<HomePage> {
                                 IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      if (index == 2) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SelectSub()));
-                                      } else if (index == 0) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AnnouncementList()));
+                                      switch (index) {
+                                        case 0:
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddAnnouncement()));
+                                          break;
+                                        case 1:
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddComp()));
+                                          break;
+                                        case 2:
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SelectSub()));
+                                          break;
+                                        // case 3:
+                                        //   Navigator.push(
+                                        //       context,
+                                        //       MaterialPageRoute(
+                                        //           builder: (context) =>
+                                        //               Vote()));
+                                        //  break;
                                       }
                                     });
                                   },
@@ -180,7 +199,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      bottomNavigationBar: Bottom_navigation_bar(),
     );
   }
 }

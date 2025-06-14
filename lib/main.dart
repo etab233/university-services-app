@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:log_in/complaint_Screen/add_complaint.dart';
+import 'package:log_in/complaint_Screen/view_complaints.dart';
 import 'welcome.dart';
 
 void main() => runApp(MyApp());
@@ -9,7 +11,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'خدمات جامعية',
-      home: WelcomePage(),
+      home: AddComp(),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/objection_Screens/admin/view_objection.dart';
+import '../../bottom_navigation_bar.dart';
+import 'view_objection.dart';
 import '../../Constants.dart';
 
 class ChooseSub extends StatefulWidget {
@@ -50,37 +51,7 @@ class _ChooseSubState extends State<ChooseSub> {
                 icon: const Icon(Icons.settings),
               ),
             ]),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          selectedItemColor: Constants.primaryColor,
-          unselectedItemColor: Colors.black,
-          showUnselectedLabels: true,
-          iconSize: 30,
-          type: BottomNavigationBarType.fixed,
-          landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'home',
-              activeIcon: Icon(Icons.home),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_box_outlined),
-              label: 'add',
-              activeIcon: Icon(Icons.add),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_2_outlined),
-              label: 'profile',
-              activeIcon: Icon(Icons.person_2, color: Constants.primaryColor),
-            ),
-          ],
-        ),
+        bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
           child: Container(
             padding:

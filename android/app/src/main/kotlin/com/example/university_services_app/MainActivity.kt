@@ -1,4 +1,4 @@
-package com.example.lattakia_university
+package com.example.university_services_app
 
 import io.flutter.embedding.android.FlutterActivity
 

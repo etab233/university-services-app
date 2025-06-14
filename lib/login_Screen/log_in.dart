@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'forgotPassword.dart';
 import '../AuthService.dart';
 import '../home_Screen/homePage.dart';
@@ -17,6 +16,50 @@ class _Log_inState extends State<Log_in> {
   final TextEditingController _emailController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isLoading = false;
+  void _showSnackbar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _login() async {
+    if (!_formkey.currentState!.validate()) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      final id = _idController.text.trim();
+      final password = _passwordController.text.trim();
+      final email = _emailController.text.trim().isNotEmpty
+          ? _emailController.text.trim()
+          : null;
+
+      final result = await AuthService.login(
+        id: id,
+        password: password,
+        email: email,
+      );
+
+      _showSnackbar(result['message'], isError: !result['success']);
+
+      if (result['success']) {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        });
+      }
+    } catch (e) {
+      _showSnackbar('حدث خطأ أثناء محاولة تسجيل الدخول', isError: true);
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,40 +223,7 @@ class _Log_inState extends State<Log_in> {
                         width: 140,
                         height: 45,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formkey.currentState!.validate()) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              try {
-                                final id = _idController.text.trim();
-                                final password =
-                                    _passwordController.text.trim();
-                                final email = _emailController.text.trim();
-                                final token = await AuthService.login(
-                                    id, password, email);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Welcome !"),
-                                  ),
-                                );
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()));
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Error : $e"),
-                                    backgroundColor: Constants.primaryColor,
-                                    showCloseIcon: true,
-                                  ),
-                                );
-                              } finally {
-                                setState(() => isLoading = false);
-                              }
-                            }
-                          },
+                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Constants.primaryColor,
                             foregroundColor: Color(0xffffffff),

@@ -1,23 +1,54 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:log_in/Constants.dart';
 
 class AuthService {
-  static Future<String> login(String id, String password, String email) async {
+  static Future<Map<String, dynamic>> login({
+    required String id,
+    required String password,
+    String? email,
+  }) async {
     final url = Uri.parse('${Constants.baseUrl}/login');
-    final response = await http.post(url, headers: {
-      'Accept': 'application/json'
-    }, body: {
+
+    final body = {
       'unique_id': id,
       'password': password,
-      'email': email,
-    });
-    if (response.statusCode == 200) {
+    };
+
+    if (email != null) {
+      body['email'] = email;
+    }
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+        },
+        body: body,
+      );
+
       final data = json.decode(response.body);
-      return data['token'];
-    } else {
-      return 'This account is not found';
+
+      if (response.statusCode == 200) {
+        
+        return {
+          'success': true,
+          'message': data['message'],
+          'token': data['Token'],
+          'user': data['User'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': data['message'] ?? 'فشل في تسجيل الدخول',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'حدث خطأ أثناء الاتصال بالسيرفر',
+      };
     }
   }
 }
