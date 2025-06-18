@@ -1,13 +1,21 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
+import 'package:log_in/AuthService.dart';
 import 'dart:typed_data';
+
+import 'package:log_in/Constants.dart';
 
 class ProfileService {
   Future<Map<String, dynamic>?> fetchProfile(int userId) async {
     try {
+      final token = await AuthService.getToken();
       final response = await http.get(
-        Uri.parse('https://api.jsonbin.io/v3/qs/683aacb38a456b7966a7a233'),
+        Uri.parse('${Constants.baseUrl}/profile'),
+        headers: {
+          'Authorization': 'Baerer $token',
+          'Content-Type': 'application/json',
+        },
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -24,12 +32,16 @@ class ProfileService {
 
   Future<bool> uploadProfileImage(Uint8List imageBytes, String filename) async {
     try {
+      final token = await AuthService.getToken();
       final extension = filename.split('.').last.toLowerCase();
       final mediaType = (extension == 'png') ? 'png' : 'jpeg';
 
-      var uri = Uri.parse('http://your-domain.com/api/upload-profile-image');
-      var request = http.MultipartRequest('POST', uri);
-
+      var url = Uri.parse('${Constants.baseUrl}/profile');
+      var request = http.MultipartRequest(
+        'POST',
+        url,
+      );
+      request.headers['Authorization'] = 'Bearer $token';
       request.files.add(
         http.MultipartFile.fromBytes(
           'image',

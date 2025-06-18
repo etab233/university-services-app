@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../AuthService.dart';
 import '../Constants.dart';
 
 class Announcement {
@@ -36,7 +37,14 @@ class _AnnouncementListState extends State<AnnouncementList> {
   Future<void> fetchAnnouncement() async {
     final url = Uri.parse('${Constants.baseUrl}/announcements');
     try {
-      final response = await http.get(url);
+      final token = await AuthService.getToken();
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Baerer $token',
+          'Content-Type': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         final List jsonData = json.decode(response.body);
         setState(() {

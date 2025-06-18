@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:log_in/AuthService.dart';
 import '../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../Constants.dart';
@@ -34,7 +35,14 @@ class _ViewCompState extends State<ViewComp> {
   Future<void> fetchcomplaints() async {
     final url = Uri.parse('${Constants.baseUrl}/complaints');
     try {
-      final response = await http.get(url);
+      final token = await AuthService.getToken();
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Baerer $token',
+          'Content-Type': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         final List jsonData = json.decode(response.body);
         setState(() {

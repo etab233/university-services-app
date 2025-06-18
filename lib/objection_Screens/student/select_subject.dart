@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:log_in/AuthService.dart';
 import 'package:log_in/bottom_navigation_bar.dart';
 import 'submit_objection.dart';
 import 'package:http/http.dart' as http;
@@ -15,8 +16,14 @@ class SelectSub extends StatefulWidget {
 class _SelectSubState extends State<SelectSub> {
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
-    final response =
-        await http.get(Uri.parse('${Constants.baseUrl}/objections'));
+    final token = await AuthService.getToken();
+    final response = await http.get(
+      Uri.parse('${Constants.baseUrl}/objections'),
+      headers: {
+        'Authorization': 'Baerer $token',
+        'Content-Type': 'application/json',
+      },
+    );
 
     if (response.statusCode == 200) {
       setState(() {

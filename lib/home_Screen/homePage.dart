@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:log_in/announcment%20Screen/AnnList.dart';
+import 'package:log_in/complaint_Screen/view_complaints.dart';
+import 'package:log_in/objection_Screens/admin/select_%20subject.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:log_in/announcment%20Screen/addAnn.dart';
 import 'package:log_in/complaint_Screen/add_complaint.dart';
 import '../objection_Screens/student/select_subject.dart';
-import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
 
@@ -10,6 +13,13 @@ class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
+}
+
+Future<String> getRole() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  // String? token = await prefs.getString('token');
+  String? role = prefs.getString('role');
+  return role!;
 }
 
 class _HomePageState extends State<HomePage> {
@@ -26,7 +36,6 @@ class _HomePageState extends State<HomePage> {
     Icons.grade,
     Icons.how_to_vote,
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,39 +158,67 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      switch (index) {
-                                        case 0:
+                                  onPressed: () async {
+                                    String role = await getRole();
+                                    switch (index) {
+                                      case 0:
+                                        print(role);
+                                        if (role == "student")
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       AddAnnouncement()));
-                                          break;
-                                        case 1:
+                                        else if (role == "admin")
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AnnouncementList()));
+                                        break;
+                                      case 1:
+                                        if (role == "student")
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       AddComp()));
-                                          break;
-                                        case 2:
+                                        else if (role == "admin")
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ViewComp()));
+                                        break;
+                                      case 2:
+                                        if (role == "student")
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       SelectSub()));
-                                          break;
-                                        // case 3:
-                                        //   Navigator.push(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //           builder: (context) =>
-                                        //               Vote()));
-                                        //  break;
-                                      }
-                                    });
+                                        else if (role == "admin")
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ChooseSub()));
+                                        break;
+                                      // case 3:
+                                      //   if (role=="student")
+                                      //     Navigator.push(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //           builder: (context) =>
+                                      //               Voting_Screen_for_Student()));
+                                      //               else if(role=="admin")
+                                      //               Navigator.push(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //           builder: (context) =>
+                                      //               Voting_Screen_for_admin()));
+                                      //  break;
+                                    }
                                   },
                                   icon: const Icon(Icons.add_circle,
                                       size: 35, color: Constants.primaryColor),

@@ -45,14 +45,14 @@ class _Log_inState extends State<Log_in> {
       );
 
       _showSnackbar(result['message'], isError: !result['success']);
-
       if (result['success']) {
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage()),
-          );
-        });
+        //Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        // );
+        //}
       }
     } catch (e) {
       _showSnackbar('حدث خطأ أثناء محاولة تسجيل الدخول', isError: true);

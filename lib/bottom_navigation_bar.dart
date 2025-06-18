@@ -14,7 +14,8 @@ class Bottom_navigation_bar extends StatefulWidget {
 }
 
 class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
-  List widgets = [HomePage(), Objection(),// MyProfile()
+  List widgets = [
+    HomePage(), Objection(), // MyProfile()
   ];
   @override
   Widget build(BuildContext context) {

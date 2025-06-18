@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:log_in/AuthService.dart';
 import '../../bottom_navigation_bar.dart';
 import '../../Constants.dart';
 
@@ -27,7 +28,14 @@ class _AddCompState extends State<AddComp> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(url);
+      final token = await AuthService.getToken();
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Baerer $token',
+          'Content-Type': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -58,9 +66,11 @@ class _AddCompState extends State<AddComp> {
               : const Text("please write a title for your complaint")));
     } else {
       try {
+        final token = await AuthService.getToken();
         final response = await http.post(
           postUrl,
           headers: {
+            'Authorization': 'Baerer $token',
             'Content-Type': 'application/json',
           },
           body: json.encode({

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import '../AuthService.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
 import 'notifications.dart';
@@ -29,7 +30,14 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(url);
+      final token = await AuthService.getToken();
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Baerer $token',
+          'Content-Type': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -52,6 +60,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
   Future<void> publish() async {
     final postUrl = Uri.parse('${Constants.baseUrl}/announce');
     final content = _AddController.text;
+    final token = await AuthService.getToken();
     if (content.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content:
@@ -61,6 +70,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
         final response = await http.post(
           postUrl,
           headers: {
+            'Authorization': 'Baerer $token',
             'Content-Type': 'application/json',
           },
           body: json.encode({
@@ -100,13 +110,21 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
               fontFamily: 'serif',
             ),
           ),
-          leading: const Icon(
-            Icons.campaign,
-            size: 30,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back,
+                size: 30, color: Constants.primaryColor),
           ),
+          centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.notifications, size: 30),
+              icon: Icon(
+                Icons.notifications,
+                size: 30,
+                color: Constants.primaryColor,
+              ),
               onPressed: () {
                 Navigator.push(
                     context,
@@ -116,7 +134,7 @@ class _AddAnnouncementState extends State<AddAnnouncement> {
               },
             ),
           ],
-          backgroundColor: Colors.cyan,
+          // backgroundColor: Colors.cyan,
         ),
         body: SingleChildScrollView(
           child: Column(
