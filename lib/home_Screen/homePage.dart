@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      AddAnnouncement()));
+                                                      AnnouncementList()));
                                           break;
                                         case 1:
                                           Navigator.push(

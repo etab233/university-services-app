@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'forgotPassword.dart';
-import '../AuthService.dart';
+import 'AuthService.dart';
 import '../home_Screen/homePage.dart';
 import '../Constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Log_in extends StatefulWidget {
   const Log_in({Key? key}) : super(key: key);
@@ -26,6 +27,24 @@ class _Log_inState extends State<Log_in> {
     );
   }
 
+  Future<void> saveUserData({
+  required String token,
+  required String role,
+  required String name,
+  required String id,
+  String? profileImgUrl,
+}) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('Token', token);
+  await prefs.setString('role', role);
+  await prefs.setString('name', name);
+  await prefs.setString('id', id);
+  if (profileImgUrl != null) {
+    await prefs.setString('profile_img', profileImgUrl);
+  }
+}
+
+
   void _login() async {
     if (!_formkey.currentState!.validate()) return;
 
@@ -47,13 +66,20 @@ class _Log_inState extends State<Log_in> {
       _showSnackbar(result['message'], isError: !result['success']);
 
       if (result['success']) {
-        Future.delayed(const Duration(seconds: 2), () {
+        if (result['Token'] != null) { 
+          final user = result['User'];
+          await saveUserData(
+          token: result['Token'],
+          role: user['role'],
+          name: user['name'],
+          profileImgUrl: user['profile_image'],
+          id: user['id'].toString(),);
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
-        });
-      }
+        }}
     } catch (e) {
       _showSnackbar('حدث خطأ أثناء محاولة تسجيل الدخول', isError: true);
     } finally {
@@ -80,12 +106,12 @@ class _Log_inState extends State<Log_in> {
                   height: 130,
                   Constants.university,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 const Align(
                   alignment: Alignment.topLeft,
-                  child: const Text(
+                  child:  Text(
                     "Login:",
                     style: TextStyle(
                       color: Constants.primaryColor,
@@ -233,7 +259,7 @@ class _Log_inState extends State<Log_in> {
                             ),
                             elevation: 5,
                           ),
-                          child: const Text("Login"),
+                          child: const Text("Log in"),
                         ),
                       ),
               ],

@@ -35,8 +35,8 @@ class AuthService {
         return {
           'success': true,
           'message': data['message'],
-          'token': data['Token'],
-          'user': data['User'],
+          'Token': data['Token'],
+          'User': data['User'],
         };
       } else {
         return {
