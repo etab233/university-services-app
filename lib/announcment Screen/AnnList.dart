@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/announcment%20Screen/addAnn.dart';
+import 'package:log_in/announcment%20Screen/add_edit_Ann.dart';
 import 'dart:convert';
 import '../Constants.dart';
 import 'package:intl/intl.dart';
@@ -8,20 +8,24 @@ import '../bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Announcement {
-  final String name;
-  final String date;
-  final String content;
-  final int id;
-  final int annid;
+  final String name; //اسم صاحب الإعلان
+  final DateTime created_at, updated_at; // تاريخ النشر والتعديل
+  final String content; //محتوى الإعلان 
+  final int userid; // رقم تعريف المستخدم
+  final int annid; // رقم تعريف الإعلان
 
-  Announcement({required this.name, required this.date, required this.content, required this.id, required this.annid});
+  // باني بوسطاء 
+  Announcement({required this.name, required this.created_at, required this.updated_at ,required this.content, required this.userid, required this.annid});
 
+  // factory named constructor 
+  // Announcement إلى كائن من النوع API  تحول البيانات القادمة من
   factory Announcement.fromJson(Map<String, dynamic> json) {
     return Announcement(
       name: json['user']['name'],
-      date: json['created_at'],
+      created_at:DateTime.parse(json['created_at']),
+      updated_at:DateTime.parse(json['updated_at']),
       content: json['content'],
-      id:json['user']['id'],
+      userid:json['user']['id'],
       annid: json['id'],
     );
   }
@@ -48,30 +52,38 @@ class _AnnouncementListState extends State<AnnouncementList> {
   }
 
   void initData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('Token');
-    final userRole = prefs.getString('role');
-    final id=int.parse(prefs.getString('id')!);
+    final prefs = await SharedPreferences.getInstance(); // الوصول للبيانات المخزنة في الجهاز 
+    final token = prefs.getString('Token'); // استرجاع التوكن 
+    final userRole = prefs.getString('role'); // استرجاع الدور 
+    final id=prefs.getInt('id'); //استرجاع المعرف الخاص بالمستخدم ح
 
+    // إذا الويدجيت لسا موجود بالشجرة أي ظاهر على الشاشة  => حديث البيانات و إعادة بناء الواجهة 
     if (mounted) {
       setState(() {
         role = userRole;
         user_id=id;
       });
     }
+    // إذا المستخدم مسجل دخول => نستدعي  تابع لجلب البيانات  له 
     if (token != null && token.isNotEmpty) {
       await fetchAnnouncement(token);
     }
   }
 
+  // دالة غير متزامنة لجلب الإعلانات من السيرفر وتحديث الواجهة 
   Future<void> fetchAnnouncement(String token) async {
+    // قبل جلب البيانات يتم إظهار مؤشر تحميل
+    setState(() {
+      isLoading = true;
+    });
+
     final url = Uri.parse('${Constants.baseUrl}/announcements');
     try {
       final response = await http.get(
         url,
         headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Accept': 'application/json', // إخبار السيرفر بصيغة الرد 
+          'Authorization': 'Bearer $token', // إرسال التوكن للمصادقة 
         },
       );
       if (response.statusCode == 200) {
@@ -91,7 +103,9 @@ class _AnnouncementListState extends State<AnnouncementList> {
     }
   }
 
+  // حذف إعلان حسب رقم المعرف وإذا تم الحذف بنجاح تظهر رسالة وتتحدث القائمة 
   Future<void> deleteAnnouncement(int annId)async{
+    // استرجاع التوكن من التخزين المحلي
     final prefs=await SharedPreferences.getInstance();
     final token=prefs.getString('Token');
     final url = Uri.parse('${Constants.baseUrl}/admin/announcements/$annId');
@@ -103,12 +117,17 @@ class _AnnouncementListState extends State<AnnouncementList> {
         'Authorization': 'Bearer $token',
         }
       );
+      // إذا تم الحذف بنجاح 
       if(response.statusCode==200 || response.statusCode==201){
+        // تحديث قائمة الإعلانات بجلبها من السيرفر من جديد
         await fetchAnnouncement(token!);
         setState(() {
+          // إزالة الإعلان الذي تم حذفه من القائمة المحلية 
           announcements.removeWhere((item) => item.annid == annId);
+          // فك تشفير رسالة الرد
           final data=json.decode(response.body);
           final message=data['message'];
+          // عرض رسالة تأكيد الحذف 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('$message')),
       );
@@ -122,14 +141,17 @@ class _AnnouncementListState extends State<AnnouncementList> {
     }
   }
 
-  final DateFormat formatter = DateFormat('HH:mm - dd/MM/yyyy');
+  final DateFormat formatter = DateFormat('hh:mm a - dd/MM/yyyy');
 
   @override
   Widget build(BuildContext context) {
+    // إذا كانت البيانات لا تزال تتحمل يتم عرض دائرة في منتصف الشاشة 
+    // No Announcement وإذا لا يوجد إعلانات يتم عرض 
+    // وإلا يتم عرض الإعلانات من قاعدة البيانات  وبناء الواجهة 
     return isLoading
         ? const Center(child: CircularProgressIndicator())
         : announcements.isEmpty
-            ? const Center(child: Text('No Announcement'))
+            ? const Center(child: Text('No Announcements'))
             : Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
@@ -144,20 +166,34 @@ class _AnnouncementListState extends State<AnnouncementList> {
                     icon: const Icon(Icons.arrow_back, size: 30, color: Constants.primaryColor),
                   ),
                   actions: [
+                    // يمكنه إضافة إعلان admin إذا كان المستخدم 
                     if (role == 'admin')
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          Navigator.push(
+                        // إذا ضغط عليها ينتقل إلى واجهة إنشاء إعلان ونستنى المستخدم يرجع منا 
+                        onPressed: () async {
+                          final result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => AddAnnouncement()),
+                            MaterialPageRoute(builder: (context) => Add_Edit_Announcement()),
                           );
+                          // إذا المستخدم نشر إعلان و رجع من الصفحة => نعيد تحديث القائمة 
+                          if(result==true){ 
+                            setState((){
+                              isLoading=true; // نعيد التحميل من جديد
+                            });
+                            final prefs = await SharedPreferences.getInstance();
+                            final token = prefs.getString('Token');
+                            if (token != null) {
+                              await fetchAnnouncement(token); // جلب البيانات الجديدة 
+                            }
+                          }
                         },
                       ),
                   ],
                 ),
                 body: Stack(
                   children: [
+                    // خلفية بتدرج لوني 
                     Positioned.fill(
                       child: Column(
                         children: [
@@ -181,13 +217,14 @@ class _AnnouncementListState extends State<AnnouncementList> {
                         ],
                       ),
                     ),
+                    // نهاية أول عنصر الخلفية ونبدأ بقائمة الإعلانات 
                     Padding(
                       padding: const EdgeInsets.all(20),
+                      // قائمة ديناميكية من الإعلانات 
                       child: ListView.builder(
                         itemCount: announcements.length,
                         itemBuilder: (content, index) {
                           final item = announcements[index];
-                          DateTime parsedDate = DateTime.parse(item.date);
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                             padding: const EdgeInsets.all(16),
@@ -220,23 +257,37 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                           fontSize: 20,
                                           fontWeight: FontWeight.w600,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                        overflow: TextOverflow.ellipsis, // إذا كان الاسم طويل جدا 
                                       ),
+                                      // إذا كان تاريخ التعديل مختلف عن تاريخ الإنشاء  => تم التعديل => نعرض تاريخ التعديل 
+                                      // إذا كانا متساويان => لم يتم التعديل => نعرض تاريخ الإنشاء 
                                     Text(
-                                      formatter.format(parsedDate),
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                          fontStyle: FontStyle.italic),
-                                    )
+                                       item.updated_at.isAfter(item.created_at)
+                                      ? DateFormat('hh:mm a - dd-MM-yyyy').format(item.updated_at)
+                                      : DateFormat('hh:mm a - dd-MM-yyyy').format(item.created_at),
+                                      style:const TextStyle(color: Colors.grey, fontSize: 14),
+                                    ),
                                       ],
                                     ),
                                     const Spacer(),
-                                    if(user_id==item.id && role=='admin')
+                                    // إذا كان المستخدن أدمن وهو صاحب الإعلان => يمكنه التعديل وحذف الإعلان الخاص به 
+                                    if(user_id==item.userid && role=='admin')
                                        PopupMenuButton<String>(
-                                        onSelected: (value) {
+                                        onSelected: (value) async {
                                           if(value=='edit'){
-
+                                            final result =await Navigator.push(
+                                              context,
+                                              // مرر الإعلان الحالي لتقوم بملء محتوى الإعلان في الواجهة تلقائيًا
+                                              MaterialPageRoute(builder:(context) => Add_Edit_Announcement(announcement: item))
+                                            );
+                                            if (result==true){
+                                              final prefs= await SharedPreferences.getInstance();
+                                              final token =prefs.getString('Token');
+                                              if(token != null ){
+                                                await fetchAnnouncement(token);
+                                                setState(() {});
+                                              }
+                                            }
                                           }
                                           else if(value=='delete'){
                                             showDialog(
@@ -250,8 +301,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                                       child:const Text("cancel")),
                                                     TextButton(
                                                       onPressed: () {
-                                                         Navigator.of(context).pop();
-                                                         deleteAnnouncement(item.annid);
+                                                         Navigator.of(context).pop(); // إغلاق مربع الحوار 
+                                                         deleteAnnouncement(item.annid); // تنفيذ الحذف 
                                                       },
                                                       child:const Text("Yes")),
                                                   ],

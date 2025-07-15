@@ -31,14 +31,14 @@ class _Log_inState extends State<Log_in> {
   required String token,
   required String role,
   required String name,
-  required String id,
+  required int id,
   String? profileImgUrl,
 }) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('Token', token);
   await prefs.setString('role', role);
   await prefs.setString('name', name);
-  await prefs.setString('id', id);
+  await prefs.setInt('id', id);
   if (profileImgUrl != null) {
     await prefs.setString('profile_img', profileImgUrl);
   }
@@ -73,7 +73,7 @@ class _Log_inState extends State<Log_in> {
           role: user['role'],
           name: user['name'],
           profileImgUrl: user['profile_image'],
-          id: user['id'].toString(),);
+          id: user['id'],);
 
           Navigator.pushReplacement(
             context,

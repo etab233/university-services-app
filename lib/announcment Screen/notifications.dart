@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'notification_content.dart';
+import '../Constants.dart';
 
 class Notifications extends StatefulWidget {
   Notifications({Key? key}) : super(key: key);
@@ -29,11 +30,12 @@ String? _shortenText(String? string, int limit) {
   }
 
   Future<void> fetchNotifications() async{
-    final url = Uri.parse('http://your-api-url.com/api/notifications');
+    final url = Uri.parse('${Constants.baseUrl}/notifications');
     try{
       final response =await http.get(url);
       if(response.statusCode == 200){
         final data= json.decode(response.body);
+        print(data);
         setState(() {
           notifications=data.cast<Map<String, dynamic>>();
         });
@@ -45,8 +47,8 @@ String? _shortenText(String? string, int limit) {
     }
   }
 
-  Future<void> deleteNotification(String id) async{
-    final url = Uri.parse('http://your-api-url.com/api/announcement/$id');
+  /*Future<void> deleteNotification(String id) async{
+    final url = Uri.parse('${Constants.baseUrl}/notifications/$id');
     try{
       final response=await http.delete(url);
       if(response.statusCode ==200){
@@ -64,7 +66,7 @@ String? _shortenText(String? string, int limit) {
         const SnackBar(content: Text("Unable to connect. Please try again"))
       );
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext build) {
@@ -78,9 +80,10 @@ String? _shortenText(String? string, int limit) {
             fontFamily: 'serif',
           ),
         ),
-        leading: const Icon(
-          Icons.notifications,
-          size: 30,
+        leading: IconButton(
+          onPressed:() => Navigator.pop(context),
+          icon:const Icon(Icons.arrow_back,
+          size: 30,),
         ),
       ),
       body: ListView.separated(
@@ -114,7 +117,7 @@ String? _shortenText(String? string, int limit) {
                         style: const TextStyle(color: Colors.grey, fontSize: 14),)
                 ],
               ),
-              trailing: PopupMenuButton<String>(
+              /*trailing: PopupMenuButton<String>(
                 icon:const Icon(Icons.more_vert),
                 onSelected: (value) async{
                   await deleteNotification(id);
@@ -128,7 +131,7 @@ String? _shortenText(String? string, int limit) {
                       child: Text("Delete Notification"),
                     ),
                   ],
-              ),
+              ),*/
               isThreeLine: true,
               onTap: () {
                 Navigator.push(

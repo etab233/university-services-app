@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/announcment%20Screen/addAnn.dart';
 import 'package:log_in/complaint_Screen/add_complaint.dart';
+import '../complaint_Screen/view_complaints.dart';
 import '../objection_Screens/student/select_subject.dart';
 import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../announcment Screen/notifications.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage ({Key? key}) : super(key: key);
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final List<String> list = [
     'Announcement',
     'Complaint',
@@ -46,12 +48,12 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,MaterialPageRoute(builder: (context) => Notifications())
+                );
+              },
+              icon: const Icon(Icons.notifications, size: 30,),
             ),
           ]),
       body: Stack(
@@ -160,12 +162,22 @@ class _HomePageState extends State<HomePage> {
                                                       AnnouncementList()));
                                           break;
                                         case 1:
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddComp()));
-                                          break;
+                                          () async{
+                                            final prefs =await SharedPreferences.getInstance();
+                                            final role= prefs.getString('role');
+                                            if (role =='admin'){
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => ViewComp())
+                                              );
+                                            }
+                                            else{
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => AddComp())
+                                              );
+                                            };
+                                          }(); break;
                                         case 2:
                                           Navigator.push(
                                               context,

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../bottom_navigation_bar.dart';
 import '../../Constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddComp extends StatefulWidget {
   const AddComp({super.key});
@@ -12,77 +13,88 @@ class AddComp extends StatefulWidget {
 }
 
 class _AddCompState extends State<AddComp> {
-  final _ContentController = TextEditingController();
-  final _TitleController = TextEditingController();
-  final url = Uri.parse('${Constants.baseUrl}/addcomp');
-  String? name;
+  final _contentController = TextEditingController();
+  final _titleController = TextEditingController();
+  final url = Uri.parse('${Constants.baseUrl}/student/complaints');
+  String? name, token;
   String? profile_img_url;
   DateTime? date;
+  int? user_id;
 
   @override
   void initState() {
     super.initState();
     fetchData();
-  }
+  } 
 
   Future<void> fetchData() async {
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          name = data['name'];
-          profile_img_url = data['imageProfile'];
-          date = DateTime.parse(data['created_at']);
-        });
-      } else {
-        setState(() {
-          name = null;
-          profile_img_url = null;
-          date = null;
-        });
-      }
-    } catch (e) {
-      print("Error fetching user profile: $e");
-    }
+    final prefs= await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('name');
+      profile_img_url = prefs.getString('profile_img');
+      token =prefs.getString('Token');
+      user_id=prefs.getInt('id');
+    });
   }
 
-  Future<void> SendComp() async {
-    final postUrl = Uri.parse('${Constants.baseUrl}/complaint');
-    final title = _TitleController.text;
-    final content = _ContentController.text;
+  Future<bool> sendComp() async {
+    final title = _titleController.text;
+    final content = _contentController.text;
+
+    if (token == null) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Please wait, loading user data...")));
+  return false;
+}
+
+
     if (content.trim().isEmpty || title.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: content.trim().isEmpty
               ? const Text("please write a content for your complaint")
               : const Text("please write a title for your complaint")));
+      return false;
     } else {
       try {
         final response = await http.post(
-          postUrl,
+          url,
           headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer $token'
           },
           body: json.encode({
-            'title': title,
-            'content': content,
-            'date': DateTime.now().toIso8601String(),
-            'userID': 1,
+            'subject': title,
+            'description': content,
+            'created_at': DateTime.now().toIso8601String(),
+            'user_id': user_id,
           }),
         );
         if (response.statusCode == 200 || response.statusCode == 201) {
+          final res = json.decode(response.body);
+          final message =res['message'];
+          setState(() {
+          date = DateTime.parse(res['created_at']);
+        });
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Complaint sent successfully!")));
-          _ContentController.clear();
-          Navigator.of(context).pop();
+               SnackBar(content: Text("$message"), backgroundColor: Colors.green,));
+          _contentController.clear();
+          // إرجاع خطوة للوراء بعد عرض الرسالة بفترة قصيرة
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
+          return true;
         } else {
+          final res = json.decode(response.body);
+          final message =res['messaage'];
           ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Sending failed")));
+              .showSnackBar(SnackBar(content: Text("$message"), backgroundColor: Colors.red,));
+          return false;
         }
       } catch (e) {
-        //print("Error while SendComping: $e");
+        //print(e);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("An error occurred while sending")));
+        return false;
       }
     }
   }
@@ -90,14 +102,12 @@ class _AddCompState extends State<AddComp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 152, 203, 245),
       bottomNavigationBar: Bottom_navigation_bar(),
       appBar: AppBar(
-        title: Text(
+        title:const Text(
           "Whats your problem?",
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
@@ -107,8 +117,34 @@ class _AddCompState extends State<AddComp> {
               size: 30, color: Constants.primaryColor),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Stack(
+        children: [
+          Positioned.fill(
+                      child: Column(
+                        children: [
+                          Expanded(flex: 3, child: Container(color: const Color(0xffffffff))),
+                          Expanded(
+                            flex: 7,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFFBFE4FA), Color(0xff6fb1d9)],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(80),
+                                  topRight: Radius.circular(80),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+            Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -129,6 +165,7 @@ class _AddCompState extends State<AddComp> {
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
                         radius: 20,
@@ -148,7 +185,7 @@ class _AddCompState extends State<AddComp> {
                           Text("$name", style: const TextStyle(fontSize: 20)),
                           Text(
                             date != null
-                                ? DateFormat('dd/MM/yyyy').format(date!)
+                                ? DateFormat('hh-mm a dd/MM/yyyy').format(date!)
                                 : '',
                             style: const TextStyle(
                                 color: Colors.grey, fontSize: 14),
@@ -160,53 +197,50 @@ class _AddCompState extends State<AddComp> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Expanded(
-                    child: TextField(
+                  TextField(
                       maxLength: 25,
-                      controller: _TitleController,
+                      controller: _titleController,
                       decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                const BorderSide(color: Color(0xff000000))),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            color: Constants.primaryColor,
-                          ),
-                        ),
-                        counterText: "",
-                        labelText: "Title",
-                        // hintText: "Complaint title",
-                        labelStyle: TextStyle(fontSize: 20),
+                    labelText: "title",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.grey)),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Constants.primaryColor,
                       ),
                     ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Constants.primaryColor)),
+                    errorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Constants.primaryColor)),
                   ),
-                  SizedBox(
+                        ),
+                  const SizedBox(
                     height: 20,
                   ),
-                  Expanded(
-                    flex: 3,
+                  SizedBox(
+                    height: 150,
                     child: TextField(
                       expands: true,
                       maxLength: 255,
                       maxLines: null,
-                      controller: _ContentController,
+                      controller: _contentController,
                       decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide:
-                                  const BorderSide(color: Color(0xff000000))),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Constants.primaryColor,
-                            ),
-                          ),
-                          labelText: "Content",
-                          labelStyle: TextStyle(fontSize: 20)
-                          // hintText: "Write the complaint",
-                          ),
+                    labelText: "content",
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.grey)),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Constants.primaryColor,
+                      ),
+                    ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Constants.primaryColor)),
+                    errorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Constants.primaryColor)),
+                  ),
                     ),
                   ),
                 ],
@@ -218,7 +252,7 @@ class _AddCompState extends State<AddComp> {
             Padding(
               padding: const EdgeInsets.only(right: 17),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
                     height: 45,
@@ -255,10 +289,10 @@ class _AddCompState extends State<AddComp> {
                         foregroundColor: Colors.black,
                         elevation: 10,
                       ),
-                      child: Text("Discard",
+                      child:const Text("Discard",
                           style: TextStyle(
                               fontSize: 20,
-                              color: const Color.fromARGB(255, 247, 16, 0))),
+                              color: Color.fromARGB(255, 247, 16, 0))),
                     ),
                   ),
                   const SizedBox(
@@ -269,14 +303,14 @@ class _AddCompState extends State<AddComp> {
                     width: 120,
                     child: ElevatedButton(
                       onPressed: () {
-                        SendComp();
+                        sendComp();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Constants.primaryColor,
                         foregroundColor: Colors.black,
                         elevation: 5,
                       ),
-                      child: Text("Send",
+                      child:const Text("Send",
                           style: TextStyle(fontSize: 20, color: Colors.white)),
                     ),
                   ),
@@ -285,6 +319,8 @@ class _AddCompState extends State<AddComp> {
             ),
           ],
         ),
+        ),
+        ],
       ),
     );
   }
