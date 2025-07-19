@@ -1,12 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:log_in/AuthService.dart';
 import '../../home_Screen/homePage.dart';
 import '../../Constants.dart';
 import '../../bottom_navigation_bar.dart';
+import 'package:http/http.dart' as http;
 
 class Objection extends StatefulWidget {
-  const Objection({
-    super.key,
-  });
+  final String year;
+  final String term;
+  final String sub_name;
+  const Objection(
+      {super.key,
+      required this.year,
+      required this.term,
+      required this.sub_name});
   State<StatefulWidget> createState() {
     return ObjectionState();
   }
@@ -16,34 +25,96 @@ class ObjectionState extends State<Objection> {
   final TextEditingController _gradeController = TextEditingController();
   final TextEditingController _testHallController = TextEditingController();
   final TextEditingController _lecturerNameController = TextEditingController();
-  void _SendObjection() {
-    String testHall = _testHallController.text.trim();
-    int? grade = int.tryParse(_gradeController.text.trim());
-    String lecturerName = _lecturerNameController.text.trim();
+  bool isLoading = false;
+  bool isLoading2 = false;
+  String duration = "";
+  Future<void> fetchDuration() async {
+    final url = Uri.parse("${Constants.baseUrl}/objections/dates");
+    final token = await AuthService.getToken();
+    try {
+      final response = await http.post(url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({'subject_name': widget.sub_name}));
+      final data = await jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        setState(() {
+          duration = data['remaining'];
+        });
+      }
+    } catch (e) {}
   }
 
-  void _showMessage() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Objection Submitted")));
+  @override
+  void initState() {
+    super.initState();
+    fetchDuration();
   }
 
-  //getting the duration value from the backend
-  int duration = 5;
+  Future<void> submitObjection() async {
+    setState(() {
+      isLoading = true;
+    });
+    final url = Uri.parse("${Constants.baseUrl}/student/objections/submit");
+    String testHall = _testHallController.text;
+    String grade = _gradeController.text;
+    String lecturerName = _lecturerNameController.text;
+    final token = await AuthService.getToken();
+    try {
+      final response = await http.post(url,
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'test_hall': testHall,
+            'grade': grade,
+            'lecturer_name': lecturerName,
+            'subject_year': widget.year,
+            'subject_term': widget.term,
+            'subject_name': widget.sub_name
+          }));
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Constants.showMessage(context, data['message'], Colors.green);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      } else if (data.containsKey('message')) {
+        Constants.showMessage(context, data['message'], Colors.red);
+      } else if (data.containsKey('errors')) {
+        final errors = data['errors'] as Map<String, dynamic>;
+        final error_message = errors.values.first[0];
+        Constants.showMessage(context, error_message, Constants.primaryColor);
+      } else {
+        Constants.showMessage(context, "Unknown Error", Colors.red);
+      }
+    } catch (e) {
+      Constants.showMessage(context, "Failed to connect server $e", Colors.red);
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.primaryColor,
-          title:const Text(
+          title: const Text(
             "Your Objection",
             style: TextStyle(fontSize: 24),
           ),
           centerTitle: true,
-          actions: [IconButton(onPressed: () {}, icon:const Icon(Icons.settings))],
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
+          ],
         ),
         bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
-          padding:const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(children: [
             Container(
               height: 50,
@@ -109,8 +180,8 @@ class ObjectionState extends State<Objection> {
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
-                    color:const Color.fromARGB(255, 252, 184, 179),
-                    child:const Text(
+                    color: const Color.fromARGB(255, 252, 184, 179),
+                    child: const Text(
                       "Cancel",
                       style: TextStyle(
                           fontSize: 16,
@@ -119,33 +190,38 @@ class ObjectionState extends State<Objection> {
                 const SizedBox(
                   width: 20,
                 ),
-                MaterialButton(
-                    height: 45,
-                    onPressed: () {
-                      _SendObjection();
-                      _showMessage();
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    color: Constants.primaryColor,
-                    child:const Text(
-                      "Send Objection",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    )),
+                isLoading
+                    ? CircularProgressIndicator(
+                        color: Constants.primaryColor,
+                      )
+                    : MaterialButton(
+                        height: 45,
+                        onPressed: () {
+                          submitObjection();
+                          // Constants.showMessage(
+                          //     context, "Objection submitted", Colors.green);
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => HomePage()));
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        color: Constants.primaryColor,
+                        child: const Text(
+                          "Send Objection",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        )),
               ],
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              "$duration days left",
+              "$duration",
               textAlign: TextAlign.center,
             ),
-          ]
-          ),
-        )
-        );
+          ]),
+        ));
   }
 }

@@ -33,6 +33,7 @@ class AuthService {
       if (response.statusCode == 200) {
         await prefs.setString('token', data['Token']);
         await prefs.setString('role', data['User']["role"]);
+        await prefs.setString('id', data['User']["unique_id"]);
         await prefs.setBool('success', true);
         // String? token = await prefs.getString('token') ?? "token is NULL";
         // print(token);
@@ -69,5 +70,15 @@ class AuthService {
   static Future<String?> getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
+  }
+
+  static Future<String?> getId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('id');
+  }
+
+  static Future<String?> getRole() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('role');
   }
 }

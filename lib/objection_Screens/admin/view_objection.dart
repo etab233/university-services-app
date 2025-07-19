@@ -6,7 +6,7 @@ import 'dart:convert';
 import '../../Constants.dart';
 
 class Objections {
-  final int student_id;
+  final String student_id;
   final String student_name;
   final int grade;
   final String test_hall;
@@ -15,14 +15,14 @@ class Objections {
   Objections(this.student_id, this.student_name, this.grade, this.test_hall,
       this.lecturer_name, this.date);
   factory Objections.fromJson(Map<String, dynamic> json) {
-    return Objections(json['student_id'], json['student_name'], json['grade'],
-        json['test_hall'], json['lecturer_name'], json['date']);
+    return Objections(json['student_id'], json['name'], json['grade'],
+        json['test_hall'], json['lecturer_name'], json['created_at']);
   }
 }
 
 class ViewObjections extends StatefulWidget {
   final String subject;
-  const ViewObjections(this.subject);
+  const ViewObjections({required this.subject});
   @override
   _ViewObjectionsState createState() => _ViewObjectionsState();
 }
@@ -33,17 +33,18 @@ class _ViewObjectionsState extends State<ViewObjections> {
   @override
   void initState() {
     super.initState();
-    fetchObjections();
+    fetchObjections(widget.subject);
   }
 
-  Future<void> fetchObjections() async {
-    final url = Uri.parse('${Constants.baseUrl}/objections');
+  Future<void> fetchObjections(String subject) async {
+    final url = Uri.parse('${Constants.baseUrl}/admin/objections/submissions')
+        .replace(queryParameters: {'subject_name': subject});
     try {
       final token = await AuthService.getToken();
       final response = await http.get(
         url,
         headers: {
-          'Authorization': 'Baerer $token',
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
@@ -68,7 +69,10 @@ class _ViewObjectionsState extends State<ViewObjections> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: CircularProgressIndicator(
+            color: Constants.primaryColor,
+          ))
         : objections.isEmpty
             ? const Center(
                 child: Text('No Objections'),

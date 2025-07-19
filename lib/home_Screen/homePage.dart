@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:log_in/AuthService.dart';
 import 'package:log_in/announcment%20Screen/AnnList.dart';
 import 'package:log_in/complaint_Screen/view_complaints.dart';
-import 'package:log_in/objection_Screens/admin/select_%20subject.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:log_in/announcment%20Screen/addAnn.dart';
 import 'package:log_in/complaint_Screen/add_complaint.dart';
-import '../objection_Screens/student/select_subject.dart';
+import '../objection_Screens/select_subject.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
 
@@ -13,13 +12,6 @@ class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
-}
-
-Future<String> getRole() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  // String? token = await prefs.getString('token');
-  String? role = prefs.getString('role');
-  return role!;
 }
 
 class _HomePageState extends State<HomePage> {
@@ -159,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 IconButton(
                                   onPressed: () async {
-                                    String role = await getRole();
+                                    final role = await AuthService.getRole();
                                     switch (index) {
                                       case 0:
                                         print(role);
@@ -191,18 +183,11 @@ class _HomePageState extends State<HomePage> {
                                                       ViewComp()));
                                         break;
                                       case 2:
-                                        if (role == "student")
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SelectSub()));
-                                        else if (role == "admin")
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ChooseSub()));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SelectSub()));
                                         break;
                                       // case 3:
                                       //   if (role=="student")
