@@ -40,6 +40,8 @@ class AuthService {
         return {
           'success': true,
           'message': data['message'],
+          'Token': data['Token'],
+          'User': data['User'],
         };
       } else {
         await prefs.setBool('success', false);

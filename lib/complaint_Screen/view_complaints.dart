@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/AuthService.dart';
 import '../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../Constants.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Complaints {
   final String student_name;
   final String title;
   final String content;
   final String date;
-  Complaints(this.student_name, this.title, this.content, this.date);
+  final int compId;
+
+  Complaints(
+      this.student_name, this.title, this.content, this.date, this.compId);
   factory Complaints.fromJson(Map<String, dynamic> json) {
-    return Complaints(
-        json['student_name'], json['title'], json['content'], json['date']);
+    String date = json['created_at'];
+    String dateFormat =
+        DateFormat('hh:mm a - dd/MM/yyyy').format(DateTime.parse(date));
+    return Complaints(json['user']['name'], json['subject'],
+        json['description'], dateFormat, json['id']);
   }
 }
 
@@ -33,21 +40,19 @@ class _ViewCompState extends State<ViewComp> {
   }
 
   Future<void> fetchcomplaints() async {
-    final url = Uri.parse('${Constants.baseUrl}/complaints');
+    final url = Uri.parse('${Constants.baseUrl}/admin/complaints');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('Token');
     try {
-      final token = await AuthService.getToken();
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Baerer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
       if (response.statusCode == 200) {
-        final List jsonData = json.decode(response.body);
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        final List<dynamic> data = jsonData['complaints'];
         setState(() {
-          complaints =
-              jsonData.map((item) => Complaints.fromJson(item)).toList();
+          complaints = data.map((item) => Complaints.fromJson(item)).toList();
           isLoading = false;
         });
       } else {
@@ -61,34 +66,60 @@ class _ViewCompState extends State<ViewComp> {
     }
   }
 
+  Future<void> deleteComplaint(int compId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('Token');
+    final url = Uri.parse('${Constants.baseUrl}/admin/complaints/$compId');
+    try {
+      final response = await http.delete(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        fetchcomplaints();
+        setState(() {
+          complaints.removeWhere((item) => item.compId == compId);
+          final data = json.decode(response.body);
+          final message = data['message'];
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('$message'),
+            backgroundColor: Colors.green,
+          ));
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('حدث خطأ أثناء الحذف')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : complaints.isEmpty
-            ? const Center(
-                child: Text('No complaints'),
-              )
-            : Scaffold(
-                backgroundColor: Colors.white,
-                bottomNavigationBar: Bottom_navigation_bar(),
-                appBar: AppBar(
-                  title: Text(
-                    "Complaints",
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  centerTitle: true,
-                  backgroundColor: Colors.white,
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back,
-                        size: 30, color: Constants.primaryColor),
-                  ),
-                ),
-                body: Stack(children: [
+    return Scaffold(
+      backgroundColor: Colors.white,
+      bottomNavigationBar: Bottom_navigation_bar(),
+      appBar: AppBar(
+        title: const Text(
+          "Complaints",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back,
+              size: 30, color: Constants.primaryColor),
+        ),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : complaints.isEmpty
+              ? const Center(
+                  child: Text('No complaints'),
+                )
+              : Stack(children: [
                   Positioned.fill(
                     child: Column(
                       children: [
@@ -118,21 +149,23 @@ class _ViewCompState extends State<ViewComp> {
                     padding: const EdgeInsets.all(10),
                     child: ListView.builder(
                       itemCount: complaints.length,
-                      itemBuilder: (content, index) {
+                      itemBuilder: (context, index) {
                         final item = complaints[index];
                         return Container(
-                            margin: const EdgeInsets.all(10),
-                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              boxShadow: const [
-                                BoxShadow(
-                                    blurRadius: 5,
-                                    offset: Offset.zero,
-                                    color: Colors.black)
-                              ],
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(17),
-                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -140,27 +173,64 @@ class _ViewCompState extends State<ViewComp> {
                                   Row(
                                     children: [
                                       const Icon(Icons.person,
-                                          size: 20,
+                                          size: 30,
                                           color: Constants.primaryColor),
                                       const SizedBox(
                                         width: 5,
                                       ),
-                                      Text(
-                                        item.student_name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.student_name,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.date,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey[600]),
+                                          ),
+                                        ],
                                       ),
                                       const Spacer(),
-                                      Text(
-                                        item.date,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600]),
+                                      IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: const Text(
+                                                      "Are you sure you want to delete it?"),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                        child: const Text(
+                                                            "cancel")),
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(); // إغلاق مربع الحوار
+                                                          deleteComplaint(item
+                                                              .compId); // تنفيذ الحذف
+                                                        },
+                                                        child:
+                                                            const Text("Yes")),
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
-                                      )
                                     ],
                                   ),
                                   const SizedBox(
@@ -175,7 +245,6 @@ class _ViewCompState extends State<ViewComp> {
                                         children: [
                                           Text(
                                             item.title,
-                                            textDirection: TextDirection.rtl,
                                             style: const TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500),
@@ -185,7 +254,7 @@ class _ViewCompState extends State<ViewComp> {
                                           ),
                                           Text(
                                             item.content,
-                                            textDirection: TextDirection.rtl,
+                                            //textDirection: TextDirection.rtl,
                                             style: const TextStyle(
                                               fontSize: 18,
                                             ),
@@ -200,6 +269,6 @@ class _ViewCompState extends State<ViewComp> {
                     ),
                   ),
                 ]),
-              );
+    );
   }
 }

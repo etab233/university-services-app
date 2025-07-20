@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/AuthService.dart';
-import 'package:log_in/announcment%20Screen/AnnList.dart';
-import 'package:log_in/complaint_Screen/view_complaints.dart';
-import 'package:log_in/announcment%20Screen/addAnn.dart';
 import 'package:log_in/complaint_Screen/add_complaint.dart';
-import '../objection_Screens/select_subject.dart';
+import '../complaint_Screen/view_complaints.dart';
+import '../objection_Screens/student/select_subject.dart';
+import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../announcment Screen/notifications.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final List<String> list = [
     'Announcement',
     'Complaint',
@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
     Icons.grade,
     Icons.how_to_vote,
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +48,14 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Notifications()));
+              },
+              icon: const Icon(
+                Icons.notifications,
+                size: 30,
+              ),
             ),
           ]),
       body: Stack(
@@ -150,60 +153,55 @@ class _HomePageState extends State<HomePage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  onPressed: () async {
-                                    final role = await AuthService.getRole();
-                                    switch (index) {
-                                      case 0:
-                                        print(role);
-                                        if (role == "student")
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddAnnouncement()));
-                                        else if (role == "admin")
+                                  onPressed: () {
+                                    setState(() {
+                                      switch (index) {
+                                        case 0:
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       AnnouncementList()));
-                                        break;
-                                      case 1:
-                                        if (role == "student")
+                                          break;
+                                        case 1:
+                                          () async {
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            final role =
+                                                prefs.getString('role');
+                                            if (role == 'admin') {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewComp()));
+                                            } else {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AddComp()));
+                                            }
+                                            ;
+                                          }();
+                                          break;
+                                        case 2:
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      AddComp()));
-                                        else if (role == "admin")
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ViewComp()));
-                                        break;
-                                      case 2:
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SelectSub()));
-                                        break;
-                                      // case 3:
-                                      //   if (role=="student")
-                                      //     Navigator.push(
-                                      //       context,
-                                      //       MaterialPageRoute(
-                                      //           builder: (context) =>
-                                      //               Voting_Screen_for_Student()));
-                                      //               else if(role=="admin")
-                                      //               Navigator.push(
-                                      //       context,
-                                      //       MaterialPageRoute(
-                                      //           builder: (context) =>
-                                      //               Voting_Screen_for_admin()));
-                                      //  break;
-                                    }
+                                                      SelectSub()));
+                                          break;
+                                        // case 3:
+                                        //   Navigator.push(
+                                        //       context,
+                                        //       MaterialPageRoute(
+                                        //           builder: (context) =>
+                                        //               Vote()));
+                                        //  break;
+                                      }
+                                    });
                                   },
                                   icon: const Icon(Icons.add_circle,
                                       size: 35, color: Constants.primaryColor),
