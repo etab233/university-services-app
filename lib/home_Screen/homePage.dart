@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:log_in/complaint_Screen/add_complaint.dart';
 import '../complaint_Screen/view_complaints.dart';
-import '../objection_Screens/student/select_subject.dart';
+import '../objection_Screens/select_subject.dart';
 import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';

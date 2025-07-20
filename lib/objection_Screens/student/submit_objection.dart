@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:log_in/AuthService.dart';
+import 'package:log_in/login_Screen/AuthService.dart';
+
 import '../../home_Screen/homePage.dart';
 import '../../Constants.dart';
 import '../../bottom_navigation_bar.dart';
