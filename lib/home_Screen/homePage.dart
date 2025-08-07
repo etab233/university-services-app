@@ -7,6 +7,66 @@ import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../announcment Screen/notifications.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+// متحولات لرسم الدوائر المتداخلة بالشبكة 
+double circleSize = 35;
+double overlap = 10;
+String? name;
+
+// صف يحوي اسم و صورة المستخدم لاستخدامه لرسم الدوائر المتداخلة بكل خلية بالشبكة 
+class User{
+  String? name;
+  String? img;
+  User(this.name, this.img);
+  factory User.fromJson(Map<String,dynamic> json){
+    return User(
+      json ['name'],
+      json['profile_image']
+    );
+  }
+}
+List<User> AnnPublishers=[];
+// تابع لجلب اخر خمس مستخدمين على الأكثر متفاعلين في قسم الإعلانات 
+  Future<List<User>> fetchLastFivePublishersFromAnnouncement() async{
+    final prefs= await SharedPreferences.getInstance();
+    final token =prefs.getString('Token');
+    name =prefs.getString('name');
+    final url=Uri.parse("${Constants.baseUrl}/announcements");
+    try{
+      final response=await http.get(
+        url,
+        headers: {
+          'Content-Type':'application/json',
+          'Authorization':'Bearer $token'
+        }
+      );
+      if(response.statusCode==200){
+        List<dynamic> announcements= json.decode(response.body);
+        //نستخدم set لمنع تكرار المستخدم
+        Set<int> seenUserIds={};
+        AnnPublishers.clear(); // مهم جداً حتى لا تتكرر البيانات عند إعادة التحميل
+        for (var ann in announcements){
+          var publishJson=ann['user'];
+          if(publishJson==null) continue;
+          int userId=ann['user']['id'];
+          if(!seenUserIds.contains(userId)){
+            seenUserIds.add(userId);
+            AnnPublishers.add(User.fromJson(publishJson));
+          }
+          //نحتاج خمس مستخدمين على الأكثر
+          if(AnnPublishers.length>5) break;
+        }
+        return AnnPublishers;
+      }
+      else return [];
+    }catch(e){
+      print('$e');
+      return [];
+    }
+  }
+
 
 class HomePage extends StatefulWidget {
   const HomePage ({Key? key}) : super(key: key);
@@ -29,6 +89,17 @@ class HomePageState extends State<HomePage> {
     Icons.how_to_vote,
   ];
 
+void loadPublishers() async {
+  AnnPublishers = await fetchLastFivePublishersFromAnnouncement();
+  setState(() {});
+}
+
+  @override
+  void initState(){
+    super.initState();
+    loadPublishers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +108,9 @@ class HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           title: const Padding(
-            padding: EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 15),
             child: Text(
-              'Latakia University',
+              '   Latakia University',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -53,7 +124,7 @@ class HomePageState extends State<HomePage> {
                   context,MaterialPageRoute(builder: (context) => Notifications())
                 );
               },
-              icon: const Icon(Icons.notifications, size: 30,),
+              icon: const Icon(Icons.notifications_active_outlined, size: 30,),
             ),
           ]),
       body: Stack(
@@ -86,28 +157,34 @@ class HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 const SizedBox(
-                  height: 20,
+                  height: 5,
                 ),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Search',
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(color: Color(0xff000000)),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Constants.primaryColor),
-                    ),
-                    prefixIcon: const Icon(Icons.search),
-                  ),
-                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     Text(
+                      "Welcome $name 👋",
+                      style:const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey, ),),
+                    const SizedBox(height: 10),
+                    const Text(
+                     "Don't wait for the perfect moment — create it yourself ✨✨",
+                     style: TextStyle(
+                     fontStyle: FontStyle.italic,
+                     fontSize: 15,
+                     color: Colors.blueGrey, ),),],),),
+
                 const SizedBox(height: 50),
                 Expanded(
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 15,
+                      crossAxisSpacing: 8,
                       mainAxisSpacing: 40,
                       mainAxisExtent: 125,
                     ),
@@ -117,12 +194,12 @@ class HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Color(0xffd5d5d5)),
-                          boxShadow: [
+                          border: Border.all(color:const Color(0xffd5d5d5)),
+                          boxShadow:[
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.4),
                               blurRadius: 6,
-                              offset: Offset(0, 4),
+                              offset:const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -130,13 +207,15 @@ class HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                const SizedBox(width: 20,),
                                 Icon(
                                   icon[index],
                                   size: 30,
                                   color: Constants.primaryColor,
                                 ),
+                                const SizedBox(width: 10,),
                                 Text(
                                   "${list[index]}",
                                   textAlign: TextAlign.center,
@@ -148,9 +227,37 @@ class HomePageState extends State<HomePage> {
                               ],
                             ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                IconButton(
+                                const SizedBox(width: 20,),
+                                SizedBox(
+                                  width: AnnPublishers.length * (circleSize - overlap) + overlap,
+                                  height: circleSize,
+                                  child: Stack(
+                                  children: List.generate(AnnPublishers.length,(index){
+                                    double leftPos = index * (circleSize - overlap);
+                                    User user = AnnPublishers[index];
+                                    final hasImage = user.img != null && user.img!.isNotEmpty;
+                                    return Positioned(
+                                      left: leftPos,
+                                      child: CircleAvatar(
+                                       radius: circleSize/2,
+                                       backgroundColor: hasImage ? Colors.transparent : const Color.fromARGB(255, 186, 186, 186),// لون خلفية افتراضي 
+                                       backgroundImage: hasImage ? NetworkImage(user.img!) : null,
+                                       child: !hasImage
+                                      ? Text(
+                                      user.name!.substring(0, 1).toUpperCase(),
+                                      style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                   ),): null
+                                    ));
+                                  } )
+                                ),
+                                ),
+                                Spacer(),
+                                OutlinedButton(
                                   onPressed: () {
                                     setState(() {
                                       switch (index) {
@@ -195,8 +302,14 @@ class HomePageState extends State<HomePage> {
                                       }
                                     });
                                   },
-                                  icon: const Icon(Icons.add_circle,
-                                      size: 35, color: Constants.primaryColor),
+                                  style: OutlinedButton.styleFrom(
+                                      shape: const CircleBorder(),
+                                      side: const BorderSide(color: Colors.blue, width: 2),
+                                      ),
+                                  child: const Icon(Icons.arrow_forward_ios,
+                                      size: 20,
+                                      color: Colors.black,
+                                      ),
                                 ),
                               ],
                             ),
