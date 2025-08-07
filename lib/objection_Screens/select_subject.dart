@@ -1,30 +1,53 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:log_in/bottom_navigation_bar.dart';
+import 'package:log_in/login_Screen/AuthService.dart';
+import 'package:log_in/objection_Screens/admin/view_objection.dart';
 import 'package:http/http.dart' as http;
-import '../../bottom_navigation_bar.dart';
-import 'view_objection.dart';
-import '../../Constants.dart';
+import 'package:log_in/objection_Screens/student/submit_objection.dart';
+import '../Constants.dart';
 
-class ChooseSub extends StatefulWidget {
-  const ChooseSub({super.key});
+class SelectSub extends StatefulWidget {
+  const SelectSub({super.key});
 
   @override
-  State<ChooseSub> createState() => _ChooseSubState();
+  State<SelectSub> createState() => _SelectSubState();
 }
 
-class _ChooseSubState extends State<ChooseSub> {
+class _SelectSubState extends State<SelectSub> {
+  bool isLoading = false;
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
-    final response =
-        await http.get(Uri.parse('${Constants.baseUrl}/objections'));
-
+    final token = await AuthService.getToken();
+    setState(() {
+      isLoading = true;
+    });
+    final url = Uri.parse('${Constants.baseUrl}/objections/subjects')
+        .replace(queryParameters: {
+      'year': year,
+      'term': term,
+    });
+    final response = await http.get(url, headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    });
     if (response.statusCode == 200) {
       setState(() {
-        subjectlist = List<String>.from(json.decode(response.body));
+        final data = jsonDecode(response.body);
+        subjectList = List<String>.from(data['subjects']);
+        if (subjectList.isEmpty) {
+          Constants.showMessage(
+              context,
+              "No available subjects to object on it.",
+              const Color.fromARGB(172, 0, 0, 0));
+        }
       });
     } else {
-      print("Failed to load subjects");
+      Constants.showMessage(context, "Failed to fetch subjects", Colors.red);
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void isNull() {
@@ -33,24 +56,29 @@ class _ChooseSubState extends State<ChooseSub> {
 
   bool EnableTerm = false;
   bool EnableButton = false;
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
   String? year;
   String? term;
   String? subject;
-  List<String> subjectlist = [];
+  List<String> subjectList = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Constants.primaryColor,
-            title: const Text("Grade Objection"),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.settings),
-              ),
-            ]),
+          backgroundColor: Constants.primaryColor,
+          title: const Text("Grade Objection"),
+          centerTitle: true,
+          // actions: [
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.notifications),
+          //   ),
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.settings),
+          //   ),
+          // ]
+        ),
         bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
           child: Container(
@@ -132,39 +160,56 @@ class _ChooseSubState extends State<ChooseSub> {
                 const SizedBox(
                   height: 30,
                 ),
-                Container(
-                  padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(232, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: DropdownButton<String>(
-                    value: subject,
-                    hint: const Text("Select subject"),
-                    isExpanded: true,
-                    items: subjectlist
-                        .map((e) =>
-                            DropdownMenuItem<String>(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        subject = value;
-                        isNull();
-                      });
-                    },
-                  ),
-                ),
+                isLoading
+                    ? CircularProgressIndicator(color: Constants.primaryColor)
+                    : Container(
+                        padding:
+                            const EdgeInsets.only(right: 10, left: 10, top: 10),
+                        decoration: BoxDecoration(
+                            color: const Color.fromARGB(232, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: DropdownButton<String>(
+                          value: subject,
+                          hint: const Text("Select subject"),
+                          isExpanded: true,
+                          items: subjectList
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e, child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              subject = value;
+                              isNull();
+                            });
+                          },
+                        ),
+                      ),
                 const SizedBox(
                   height: 30,
                 ),
                 ElevatedButton(
                     onPressed: EnableButton
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ViewObjections(subject!)),
-                            );
+                        ? () async {
+                            final role = await AuthService.getRole();
+                            if (role == "admin") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ViewObjections(
+                                          subject: subject!,
+                                        )),
+                              );
+                            } else if (role == "student") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Objection(
+                                          year: year!,
+                                          term: term!,
+                                          sub_name: subject!,
+                                        )),
+                              );
+                            }
                           }
                         : null,
                     child: const Text(

@@ -28,22 +28,21 @@ class _Log_inState extends State<Log_in> {
   }
 
   Future<void> saveUserData({
-  required String token,
-  required String role,
-  required String name,
-  required int id,
-  String? profileImgUrl,
-}) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString('Token', token);
-  await prefs.setString('role', role);
-  await prefs.setString('name', name);
-  await prefs.setInt('id', id);
-  if (profileImgUrl != null) {
-    await prefs.setString('profile_img', profileImgUrl);
+    required String token,
+    required String role,
+    required String name,
+    required int id,
+    String? profileImgUrl,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('Token', token);
+    await prefs.setString('role', role);
+    await prefs.setString('name', name);
+    await prefs.setInt('id', id);
+    if (profileImgUrl != null) {
+      await prefs.setString('profile_img', profileImgUrl);
+    }
   }
-}
-
 
   void _login() async {
     if (!_formkey.currentState!.validate()) return;
@@ -66,20 +65,22 @@ class _Log_inState extends State<Log_in> {
       _showSnackbar(result['message'], isError: !result['success']);
 
       if (result['success']) {
-        if (result['Token'] != null) { 
+        if (result['Token'] != null) {
           final user = result['User'];
           await saveUserData(
-          token: result['Token'],
-          role: user['role'],
-          name: user['name'],
-          profileImgUrl: user['profile_image'],
-          id: user['id'],);
+            token: result['Token'],
+            role: user['role'],
+            name: user['name'],
+            profileImgUrl: user['profile_image'],
+            id: user['id'],
+          );
 
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
-        }}
+        }
+      }
     } catch (e) {
       _showSnackbar('حدث خطأ أثناء محاولة تسجيل الدخول', isError: true);
     } finally {
@@ -111,7 +112,7 @@ class _Log_inState extends State<Log_in> {
                 ),
                 const Align(
                   alignment: Alignment.topLeft,
-                  child:  Text(
+                  child: Text(
                     "Login:",
                     style: TextStyle(
                       color: Constants.primaryColor,

@@ -6,7 +6,6 @@ import '../../Constants.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Complaints {
   final String student_name;
   final String title;
@@ -14,19 +13,17 @@ class Complaints {
   final String date;
   final int compId;
 
-  Complaints(this.student_name, this.title, this.content, this.date, this.compId);
+  Complaints(
+      this.student_name, this.title, this.content, this.date, this.compId);
   factory Complaints.fromJson(Map<String, dynamic> json) {
-    String date =json['created_at'];
-    String dateFormat = DateFormat('hh:mm a - dd/MM/yyyy').format(DateTime.parse(date));
-    return Complaints(
-        json['user']['name'],
-        json['subject'],
-        json['description'],
-        dateFormat,
-        json['id']
-    );
+    String date = json['created_at'];
+    String dateFormat =
+        DateFormat('hh:mm a - dd/MM/yyyy').format(DateTime.parse(date));
+    return Complaints(json['user']['name'], json['subject'],
+        json['description'], dateFormat, json['id']);
   }
 }
+
 class ViewComp extends StatefulWidget {
   const ViewComp();
   @override
@@ -44,22 +41,19 @@ class _ViewCompState extends State<ViewComp> {
 
   Future<void> fetchcomplaints() async {
     final url = Uri.parse('${Constants.baseUrl}/admin/complaints');
-    final prefs= await SharedPreferences.getInstance();
-    final token =prefs.getString('Token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('Token');
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        }
-      );
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
-        final List<dynamic> data =jsonData['complaints'];
+        final List<dynamic> data = jsonData['complaints'];
         setState(() {
           complaints = data.map((item) => Complaints.fromJson(item)).toList();
-          isLoading  = false;
+          isLoading = false;
         });
       } else {
         throw Exception('Failed to fetch data');
@@ -72,61 +66,61 @@ class _ViewCompState extends State<ViewComp> {
     }
   }
 
-  Future<void> deleteComplaint(int compId) async{
-  final prefs = await SharedPreferences.getInstance();
-  final token =prefs.getString('Token');
-  final url = Uri.parse('${Constants.baseUrl}/admin/complaints/$compId');
-  try{
-    final response=await http.delete(
-      url,
-      headers: {
+  Future<void> deleteComplaint(int compId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('Token');
+    final url = Uri.parse('${Constants.baseUrl}/admin/complaints/$compId');
+    try {
+      final response = await http.delete(url, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
-      }
-    );
-    if(response.statusCode==200 || response.statusCode==201){
-      fetchcomplaints();
-      setState(() {
-        complaints.removeWhere((item) => item.compId == compId);
-        final data=json.decode(response.body);
-        final message=data['message'];
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$message'), backgroundColor: Colors.green,));
       });
-    }
-  }catch(e){
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        fetchcomplaints();
+        setState(() {
+          complaints.removeWhere((item) => item.compId == compId);
+          final data = json.decode(response.body);
+          final message = data['message'];
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('$message'),
+            backgroundColor: Colors.green,
+          ));
+        });
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('حدث خطأ أثناء الحذف')),
-    );
+        const SnackBar(content: Text('حدث خطأ أثناء الحذف')),
+      );
     }
-}
+  }
 
-          @override
-          Widget build(BuildContext context) {
-            return Scaffold(
-                backgroundColor: Colors.white,
-                bottomNavigationBar: Bottom_navigation_bar(),
-                appBar: AppBar(
-                  title:const Text(
-                    "Complaints",
-                    style: TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  backgroundColor: Colors.white,
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back,
-                        size: 30, color: Constants.primaryColor),
-                  ),
-                ),
-                body: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : complaints.isEmpty
-                  ? const Center(child: Text('No complaints'),)
-                  : Stack(children: [
-                   Positioned.fill(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      bottomNavigationBar: Bottom_navigation_bar(),
+      appBar: AppBar(
+        title: const Text(
+          "Complaints",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back,
+              size: 30, color: Constants.primaryColor),
+        ),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : complaints.isEmpty
+              ? const Center(
+                  child: Text('No complaints'),
+                )
+              : Stack(children: [
+                  Positioned.fill(
                     child: Column(
                       children: [
                         Expanded(
@@ -158,7 +152,8 @@ class _ViewCompState extends State<ViewComp> {
                       itemBuilder: (context, index) {
                         final item = complaints[index];
                         return Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -170,7 +165,7 @@ class _ViewCompState extends State<ViewComp> {
                                   blurRadius: 6,
                                   offset: const Offset(0, 3),
                                 ),
-                              ], 
+                              ],
                             ),
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -184,46 +179,57 @@ class _ViewCompState extends State<ViewComp> {
                                         width: 5,
                                       ),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                        item.student_name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      Text(
-                                        item.date,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600]),
-                                      ),
+                                            item.student_name,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.date,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey[600]),
+                                          ),
                                         ],
                                       ),
                                       const Spacer(),
                                       IconButton(
-                                        onPressed: (){
+                                        onPressed: () {
                                           showDialog(
                                               context: context,
-                                              builder: (BuildContext context){
+                                              builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  content: const Text("Are you sure you want to delete it?"),
+                                                  content: const Text(
+                                                      "Are you sure you want to delete it?"),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () => Navigator.of(context).pop(),
-                                                      child:const Text("cancel")),
+                                                        onPressed: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                        child: const Text(
+                                                            "cancel")),
                                                     TextButton(
-                                                      onPressed: () {
-                                                         Navigator.of(context).pop(); // إغلاق مربع الحوار 
-                                                         deleteComplaint(item.compId); // تنفيذ الحذف 
-                                                      },
-                                                      child:const Text("Yes")),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(); // إغلاق مربع الحوار
+                                                          deleteComplaint(item
+                                                              .compId); // تنفيذ الحذف
+                                                        },
+                                                        child:
+                                                            const Text("Yes")),
                                                   ],
                                                 );
-                                              }
-                                            );
+                                              });
                                         },
-                                        icon: const Icon(Icons.delete, color: Colors.red,),
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -263,6 +269,6 @@ class _ViewCompState extends State<ViewComp> {
                     ),
                   ),
                 ]),
-              );
+    );
   }
 }
