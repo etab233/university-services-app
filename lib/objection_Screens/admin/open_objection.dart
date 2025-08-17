@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:log_in/Constants.dart';
-import 'package:log_in/announcment%20Screen/notifications.dart';
 import 'package:log_in/bottom_navigation_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:log_in/login_Screen/AuthService.dart';
@@ -88,36 +87,18 @@ class _OpenObState extends State<OpenOb> {
         title: const Text(
           "Open Objection",
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'serif',
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
           ),
         ),
+        backgroundColor: Constants.primaryColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back,
-              size: 30, color: Constants.primaryColor),
+          icon: const Icon(Icons.arrow_back, size: 30, color: Colors.black),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.notifications,
-              size: 30,
-              color: Constants.primaryColor,
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Notifications(),
-                  ));
-            },
-          ),
-        ],
-        // backgroundColor: Colors.cyan,
       ),
       bottomNavigationBar: Bottom_navigation_bar(),
       body: Padding(
@@ -125,13 +106,15 @@ class _OpenObState extends State<OpenOb> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(
+                height: 10,
+              ),
               Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Enter subject name and date for your objection:",
+                  "Enter subject name and date for the new objection:",
                   style: TextStyle(
-                    fontSize: 17,
-                  ),
+                      fontSize: 16, color: Color.fromARGB(160, 0, 0, 0)),
                   // textAlign: TextAlign.start,
                 ),
               ),

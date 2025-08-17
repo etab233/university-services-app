@@ -245,7 +245,9 @@ class _Log_inState extends State<Log_in> {
                   height: 10,
                 ),
                 isLoading
-                    ? const CircularProgressIndicator()
+                    ? const CircularProgressIndicator(
+                        color: Constants.primaryColor,
+                      )
                     : Container(
                         width: 140,
                         height: 45,

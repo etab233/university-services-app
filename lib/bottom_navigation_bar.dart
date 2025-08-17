@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/objection_Screens/student/submit_objection.dart';
-//import 'package:log_in/profile/myprofile.dart';
+import 'package:log_in/settings.dart';
+import 'package:log_in/profile/myprofile.dart';
 import './home_Screen/homePage.dart';
 
 void _navigateToPage(BuildContext context, int index, List widgets) {
@@ -14,8 +14,7 @@ class Bottom_navigation_bar extends StatefulWidget {
 }
 
 class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
-  List widgets = [HomePage(), //Settings(),// MyProfile()
-  ];
+  List widgets = [HomePage(), Settings(), MyProfile()];
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -36,7 +35,7 @@ class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
           label: 'settings',
-          activeIcon: Icon(Icons.settings_accessibility),
+          activeIcon: Icon(Icons.settings),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_2_outlined),

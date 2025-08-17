@@ -69,36 +69,38 @@ class _ViewObjectionsState extends State<ViewObjections> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-            child: CircularProgressIndicator(
-            color: Constants.primaryColor,
-          ))
-        : objections.isEmpty
-            ? const Center(
-                child: Text('No Objections'),
-              )
-            : Scaffold(
-                backgroundColor: Colors.white,
-                bottomNavigationBar: Bottom_navigation_bar(),
-                appBar: AppBar(
-                  //automaticallyImplyLeading: false,
-                  title: Text(
-                    "${widget.subject} Objections",
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      bottomNavigationBar: Bottom_navigation_bar(),
+      appBar: AppBar(
+        //automaticallyImplyLeading: false,
+        title: Text(
+          "${widget.subject} Objections",
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back,
+              size: 30, color: Constants.primaryColor),
+        ),
+      ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Constants.primaryColor,
+            ))
+          : objections.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No Objections',
+                    style: TextStyle(fontSize: 18),
                   ),
-                  centerTitle: true,
-                  backgroundColor: Colors.white,
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back,
-                        size: 30, color: Constants.primaryColor),
-                  ),
-                ),
-                body: Stack(children: [
+                )
+              : Stack(children: [
                   Positioned.fill(
                     child: Column(
                       children: [
@@ -269,6 +271,6 @@ class _ViewObjectionsState extends State<ViewObjections> {
                     ),
                   ),
                 ]),
-              );
+    );
   }
 }

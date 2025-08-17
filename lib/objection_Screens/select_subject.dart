@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:log_in/bottom_navigation_bar.dart';
 import 'package:log_in/login_Screen/AuthService.dart';
+import 'package:log_in/objection_Screens/admin/open_objection.dart';
 import 'package:log_in/objection_Screens/admin/view_objection.dart';
 import 'package:http/http.dart' as http;
 import 'package:log_in/objection_Screens/student/submit_objection.dart';
@@ -16,6 +17,19 @@ class SelectSub extends StatefulWidget {
 
 class _SelectSubState extends State<SelectSub> {
   bool isLoading = false;
+  String? role;
+
+  @override
+  void initState() {
+    super.initState();
+    getRole();
+  }
+
+  Future<void> getRole() async {
+    role = await AuthService.getRole();
+    setState(() {});
+  }
+
   Future<void> fetchSubjects() async {
     if (year == null || term == null) return;
     final token = await AuthService.getToken();
@@ -27,27 +41,35 @@ class _SelectSubState extends State<SelectSub> {
       'year': year,
       'term': term,
     });
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    });
-    if (response.statusCode == 200) {
-      setState(() {
-        final data = jsonDecode(response.body);
-        subjectList = List<String>.from(data['subjects']);
-        if (subjectList.isEmpty) {
-          Constants.showMessage(
-              context,
-              "No available subjects to object on it.",
-              const Color.fromARGB(172, 0, 0, 0));
-        }
+    try {
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
       });
-    } else {
-      Constants.showMessage(context, "Failed to fetch subjects", Colors.red);
+      if (response.statusCode == 200) {
+        setState(() {
+          final data = jsonDecode(response.body);
+          subjectList = List<String>.from(data['subjects']);
+          if (subjectList.isEmpty) {
+            Constants.showMessage(
+                context,
+                "No available subjects to object on it.",
+                const Color.fromARGB(172, 0, 0, 0));
+          }
+        });
+      } else {
+        Constants.showMessage(context, "Failed to fetch subjects", Colors.red);
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      Constants.showMessage(
+          context, "Failed to connect server: $e", Colors.red);
+      setState(() {
+        isLoading = false;
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void isNull() {
@@ -65,20 +87,35 @@ class _SelectSubState extends State<SelectSub> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Constants.primaryColor,
-          title: const Text("Grade Objection"),
-          centerTitle: true,
-          // actions: [
-          //   IconButton(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.notifications),
-          //   ),
-          //   IconButton(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.settings),
-          //   ),
-          // ]
-        ),
+            backgroundColor: Constants.primaryColor,
+            title: const Text(
+              "Grade Objection",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
+            ),
+            centerTitle: true,
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  // color: Colors.white,
+                  size: 30,
+                )),
+            actions: [
+              if (role == "admin")
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => OpenOb()));
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 30,
+                    color: Colors.black,
+                  ),
+                )
+            ]),
         bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
           child: Container(

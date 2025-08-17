@@ -8,9 +8,8 @@ import '../bottom_navigation_bar.dart';
 import 'notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Add_Edit_Announcement extends StatefulWidget {
-  final Announcement? announcement; // لو موجود إعلان ونريد تعديله 
+  final Announcement? announcement; // لو موجود إعلان ونريد تعديله
 
   Add_Edit_Announcement({Key? key, this.announcement}) : super(key: key);
 
@@ -29,9 +28,9 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
   void initState() {
     super.initState();
     fetchData();
-    // إذا كان هناك إعلان جاهز للتعديل 
-    if(widget.announcement != null){
-      _AddController.text= widget.announcement!.content;
+    // إذا كان هناك إعلان جاهز للتعديل
+    if (widget.announcement != null) {
+      _AddController.text = widget.announcement!.content;
       name = widget.announcement!.name;
     }
   }
@@ -43,7 +42,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
       profile_img_url = prefs.getString('profile_img_url');
       user_id = prefs.getInt('id');
     });
-  } 
+  }
 
   Future<bool> publish() async {
     final content = _AddController.text.trim();
@@ -59,37 +58,33 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
       final token = prefs.getString('Token');
       final isEdite = widget.announcement != null;
       final postUrl = isEdite
-            ? Uri.parse('${Constants.baseUrl}/admin/announcements/${widget.announcement!.annid}')
-            : Uri.parse('${Constants.baseUrl}/admin/announcements');
+          ? Uri.parse(
+              '${Constants.baseUrl}/admin/announcements/${widget.announcement!.annid}')
+          : Uri.parse('${Constants.baseUrl}/admin/announcements');
 
-      final response = await ( isEdite
-            ?http.put(
+      final response = await (isEdite
+          ? http.put(postUrl,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              body: json.encode({
+                'content': content,
+                'date': DateTime.now().toIso8601String(),
+                'user_id': user_id,
+              }))
+          : http.post(
               postUrl,
               headers: {
-                'Content-Type' : 'application/json',
-                'Authorization' :'Bearer $token',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
               },
-              body: json.encode(
-                {
-                  'content' :content,
-                  'date' : DateTime.now().toIso8601String(),
-                  'user_id' :user_id,
-                }
-              )
-            )
-            : http.post(
-        postUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          'content': content,
-          'date': DateTime.now().toIso8601String(),
-          'user_id': user_id,
-        }),
-      )
-      );
+              body: json.encode({
+                'content': content,
+                'date': DateTime.now().toIso8601String(),
+                'user_id': user_id,
+              }),
+            ));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final res = json.decode(response.body);
@@ -130,13 +125,14 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "What's new ?",
+          "What's new?",
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'serif',
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            // fontFamily: 'serif',
           ),
         ),
+        centerTitle: true,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -144,7 +140,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
           },
           icon: const Icon(Icons.arrow_back, size: 30),
         ),
-        backgroundColor: Colors.cyan,
+        backgroundColor: Constants.primaryColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.campaign, size: 30),
@@ -191,7 +187,8 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                           children: [
                             Text("$name", style: const TextStyle(fontSize: 20)),
                             Text(
-                              DateFormat('hh:mm a - dd-MM-yyyy').format(DateTime.now()),
+                              DateFormat('hh:mm a - dd-MM-yyyy')
+                                  .format(DateTime.now()),
                               style: const TextStyle(
                                   color: Colors.grey, fontSize: 14),
                             ),
@@ -226,7 +223,8 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                   ElevatedButton(
                     onPressed: () {
                       if (_AddController.text.trim().isEmpty) {
-                        Navigator.pop(context); // لا شيء يتم حذفه إذا الحقل فارغ
+                        Navigator.pop(
+                            context); // لا شيء يتم حذفه إذا الحقل فارغ
                       } else {
                         showDialog(
                           context: context,
@@ -286,9 +284,10 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                                 onPressed: () async {
                                   final success = await publish();
                                   if (success) {
-                                    // close AlertDialog إغلاف الصفحة من الجذر 
-                                     Navigator.of(context, rootNavigator: true).pop(); 
-                                    // تسكير صفحة إنشاء الإعلان والرجوع للخلف 
+                                    // close AlertDialog إغلاف الصفحة من الجذر
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop();
+                                    // تسكير صفحة إنشاء الإعلان والرجوع للخلف
                                     Navigator.pop(context, true);
                                   }
                                 },
@@ -305,8 +304,12 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                       elevation: 10,
                     ),
                     child: Padding(
-                      padding:const  EdgeInsets.all(10),
-                      child: Text(widget.announcement != null ? "Save Changes" : "Publish", style: TextStyle(fontSize: 18)),
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                          widget.announcement != null
+                              ? "Save Changes"
+                              : "Publish",
+                          style: TextStyle(fontSize: 18)),
                     ),
                   ),
                 ],

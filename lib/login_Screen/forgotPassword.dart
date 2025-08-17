@@ -15,17 +15,23 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 60,
-        title: const Text(
-          'Forgot Your Password?',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+          toolbarHeight: 60,
+          title: const Text(
+            'Forgot Your Password?',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
           ),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Icons.arrow_back,
+                color: Constants.primaryColor,
+                size: 30,
+              ))),
       body: SingleChildScrollView(
         child: Form(
           key: _formkey,
@@ -105,35 +111,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       'Continue',
                       style: TextStyle(
                         fontSize: 20,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  width: 350,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Back to Login',
-                      style: TextStyle(
-                        color: Constants.primaryColor,
-                        fontSize: 20,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(10)),
-                      elevation: 5,
-                      side: BorderSide(
-                        width: 2,
-                        color: Constants.primaryColor,
                       ),
                     ),
                   ),

@@ -104,6 +104,7 @@ class _ViewCompState extends State<ViewComp> {
           "Complaints",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
@@ -114,10 +115,16 @@ class _ViewCompState extends State<ViewComp> {
         ),
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Constants.primaryColor,
+            ))
           : complaints.isEmpty
               ? const Center(
-                  child: Text('No complaints'),
+                  child: Text(
+                    'No complaints',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 )
               : Stack(children: [
                   Positioned.fill(
