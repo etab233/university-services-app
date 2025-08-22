@@ -86,7 +86,7 @@ class _AddCompState extends State<AddComp> {
           return true;
         } else {
           final res = json.decode(response.body);
-          final message = res['messaage'];
+          final message = res['message'];
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("$message"),
             backgroundColor: Colors.red,

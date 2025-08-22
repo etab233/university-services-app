@@ -13,8 +13,7 @@ class Complaints {
   final String date;
   final int compId;
 
-  Complaints(
-      this.student_name, this.title, this.content, this.date, this.compId);
+  Complaints(this.student_name, this.title, this.content, this.date, this.compId);
   factory Complaints.fromJson(Map<String, dynamic> json) {
     String date = json['created_at'];
     String dateFormat =
@@ -44,7 +43,8 @@ class _ViewCompState extends State<ViewComp> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('Token');
     try {
-      final response = await http.get(url, headers: {
+      final response = await http.get(url, 
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       });
@@ -64,7 +64,7 @@ class _ViewCompState extends State<ViewComp> {
         isLoading = false;
       });
     }
-  }
+  } 
 
   Future<void> deleteComplaint(int compId) async {
     final prefs = await SharedPreferences.getInstance();
