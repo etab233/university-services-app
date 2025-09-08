@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/announcment%20Screen/add_edit_Ann.dart';
+import 'package:university_services/announcment%20Screen/add_edit_Ann.dart';
 import 'dart:convert';
 import '../Constants.dart';
 import 'package:intl/intl.dart';

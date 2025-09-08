@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/login_Screen/AuthService.dart';
-
+import 'package:university_services/login_Screen/AuthService.dart';
+import 'package:university_services/objection_Screens/admin/view_accepted_objections.dart';
+import 'package:university_services/objection_Screens/admin/card_element.dart';
 import '../../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../Constants.dart';
 
 class Objections {
+  final int objection_id;
   final String student_id;
   final String student_name;
   final int grade;
   final String test_hall;
   final String lecturer_name;
   final String date;
-  Objections(this.student_id, this.student_name, this.grade, this.test_hall,
-      this.lecturer_name, this.date);
+  Objections(this.objection_id, this.student_id, this.student_name, this.grade,
+      this.test_hall, this.lecturer_name, this.date);
   factory Objections.fromJson(Map<String, dynamic> json) {
-    return Objections(json['student_id'], json['name'], json['grade'],
-        json['test_hall'], json['lecturer_name'], json['created_at']);
+    return Objections(
+        json["id"],
+        json['student_id'],
+        json['name'],
+        json['grade'],
+        json['test_hall'],
+        json['lecturer_name'],
+        json['created_at']);
   }
 }
 
@@ -31,15 +41,75 @@ class ViewObjections extends StatefulWidget {
 class _ViewObjectionsState extends State<ViewObjections> {
   List<Objections> objections = [];
   bool isLoading = true;
+  final _formkey = GlobalKey<FormState>();
+  TextEditingController _gradeController = TextEditingController();
   @override
   void initState() {
     super.initState();
     fetchObjections(widget.subject);
   }
 
+  Future<void> deleteObjection(int id) async {
+    final url = Uri.parse("${Constants.baseUrl}/objections/$id");
+    try {
+      final token = await AuthService.getToken();
+      final response = await http.delete(url, headers: {
+        'Content-Type': 'json/application',
+        'Authorization': 'Bearer $token'
+      });
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+        setState(() {
+          isLoading = true;
+        });
+        await fetchObjections(widget.subject);
+        Constants.showMessage(context, data["message"], Colors.green);
+      }
+      if (response.statusCode == 404 || response.statusCode == 403)
+        Constants.showMessage(context, data["message"], Colors.red);
+    } catch (e) {
+      Constants.showMessage(context, "Failed deleting objection", Colors.red);
+    }
+  }
+
+  Future<void> acceptObjection(int id) async {
+    final url = Uri.parse('${Constants.baseUrl}/objections/$id/accept');
+    try {
+      final token = await AuthService.getToken();
+      int? new_grade = int.tryParse(_gradeController.text);
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer $token",
+          },
+          body: jsonEncode({"new_grade": new_grade}));
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+        setState(() {
+          isLoading = true;
+        });
+        await fetchObjections(widget.subject);
+        Constants.showMessage(context, data["message"], Colors.green);
+      }
+      if (response.statusCode == 403 || response.statusCode == 404) {
+        Navigator.pop(context);
+        Constants.showMessage(context, data["message"], Colors.red);
+      }
+      if (response.statusCode == 422) {
+        Constants.showMessage(
+            context, data["errors"]["new_grade"][0], Colors.red);
+      }
+    } catch (e) {
+      Constants.showMessage(context,
+          "Failed to connect server please try again later", Colors.red);
+    }
+  }
+
   Future<void> fetchObjections(String subject) async {
-    final url = Uri.parse('${Constants.baseUrl}/admin/objections/submissions')
-        .replace(queryParameters: {'subject_name': subject});
+    final url =
+        Uri.parse('${Constants.baseUrl}/admin/objections/submissions/$subject');
     try {
       final token = await AuthService.getToken();
       final response = await http.get(
@@ -60,7 +130,7 @@ class _ViewObjectionsState extends State<ViewObjections> {
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
-      print('Error: $e');
+      Constants.showMessage(context, "Error: $e", Colors.red);
       setState(() {
         isLoading = false;
       });
@@ -73,7 +143,6 @@ class _ViewObjectionsState extends State<ViewObjections> {
       backgroundColor: Colors.white,
       bottomNavigationBar: Bottom_navigation_bar(),
       appBar: AppBar(
-        //automaticallyImplyLeading: false,
         title: Text(
           "${widget.subject} Objections",
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -87,6 +156,21 @@ class _ViewObjectionsState extends State<ViewObjections> {
           icon: const Icon(Icons.arrow_back,
               size: 30, color: Constants.primaryColor),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AcceptedObjections(subject: widget.subject)));
+              },
+              icon: Icon(
+                Icons.fact_check,
+                color: Colors.blue,
+                size: 30,
+              ))
+        ],
       ),
       body: isLoading
           ? const Center(
@@ -144,7 +228,6 @@ class _ViewObjectionsState extends State<ViewObjections> {
                               ],
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(17),
-                              border: Border.all(color: Colors.black),
                             ),
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -152,7 +235,7 @@ class _ViewObjectionsState extends State<ViewObjections> {
                                   Row(
                                     children: [
                                       const Icon(Icons.person,
-                                          size: 20,
+                                          size: 30,
                                           color: Constants.primaryColor),
                                       const SizedBox(
                                         width: 5,
@@ -178,94 +261,78 @@ class _ViewObjectionsState extends State<ViewObjections> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                  Table(
+                                    defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    columnWidths: {
+                                      0: FlexColumnWidth(),
+                                      1: FlexColumnWidth(),
+                                    },
                                     children: [
-                                      const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "id:",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "grade:",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "lecturer name:",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "test hall:",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                          ]),
-                                      Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "${item.student_id}",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "${item.grade}",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              item.lecturer_name,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              item.test_hall,
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ])
+                                      BuildTableRow("Id:", item.student_id),
+                                      BuildTableRow(
+                                          "Grade:", item.grade.toString()),
+                                      BuildTableRow(
+                                          "Lecturer name:", item.lecturer_name),
+                                      BuildTableRow(
+                                          "Test hall:", item.test_hall),
                                     ],
                                   ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      BuildButton(
+                                          context,
+                                          "reject",
+                                          const Color.fromARGB(
+                                              255, 252, 184, 179),
+                                          Colors.red,
+                                          "Reject Objection",
+                                          Text(
+                                              "Are you sure you want to reject this objection?"),
+                                          "No",
+                                          "yes",
+                                          () => deleteObjection(
+                                              item.objection_id)),
+                                      BuildButton(
+                                          context,
+                                          "accept",
+                                          const Color.fromARGB(
+                                              255, 175, 240, 177),
+                                          Colors.green,
+                                          "Accept Objection",
+                                          Form(
+                                            key: _formkey,
+                                            child: TextFormField(
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller: _gradeController,
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
+                                              validator: (value) {
+                                                if (value == null)
+                                                  return "The field should not be empty";
+                                                if (int.tryParse(value) == null)
+                                                  return "Enter a valid input";
+                                                if (int.tryParse(value)! >
+                                                        100 ||
+                                                    int.tryParse(value)! < 0)
+                                                  return "The mark should be between [0,100]";
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                          "Cancel",
+                                          "Accept", () {
+                                        if (_formkey.currentState!.validate())
+                                          acceptObjection(item.objection_id);
+                                      })
+                                    ],
+                                  )
                                 ]));
                       },
                     ),

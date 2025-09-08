@@ -1,57 +1,50 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:university_services/Constants.dart';
 
 class ProfileService {
-  final String fetchUrl =
-      'https://api.jsonbin.io/v3/qs/683aacb38a456b7966a7a233';
-  final String uploadUrl = 'http://your-domain.com/api/upload-profile-image';
+  final String uploadUrl = '${Constants.baseUrl}/profile/update'; // رابط API
 
-  Future<Map<String, dynamic>?> fetchProfile(int userId) async {
-    try {
-      final response = await http.get(Uri.parse(fetchUrl));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['record']; // structure matches your provided JSON
-      } else {
-        print("Failed to load profile: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print("Error fetching profile: $e");
-      return null;
-    }
-  }
-
-  Future<bool> uploadProfileImage(Uint8List imageBytes, String filename) async {
+  Future<bool> uploadProfileImage({
+    required Uint8List imageBytes,
+    required String filename,
+    required String email, // ممكن تحتاج لإرسال بيانات إضافية مثل email أو name
+  }) async {
     try {
       final extension = filename.split('.').last.toLowerCase();
       final mediaType = (extension == 'png') ? 'png' : 'jpeg';
 
       var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
 
+      // ✅ الحقول الأخرى إذا بدك ترسلها (مثلاً email)
+      request.fields['email'] = email;
+
+      // ✅ رفع الصورة
       request.files.add(
         http.MultipartFile.fromBytes(
-          'image',
+          'profile_image', // نفس اسم الحقل في Laravel
           imageBytes,
           filename: filename,
           contentType: MediaType('image', mediaType),
         ),
       );
 
+      // إرسال الطلب
       var response = await request.send();
+      final respStr = await response.stream.bytesToString();
 
       if (response.statusCode == 200) {
-        print("Image uploaded successfully");
+        print("✅ Profile updated successfully");
+        print("Server response: $respStr");
         return true;
       } else {
-        print("Image upload failed: ${response.statusCode}");
+        print("❌ Failed to update profile: ${response.statusCode}");
+        print("Server response: $respStr");
         return false;
       }
     } catch (e) {
-      print("Upload error: $e");
+      print("❌ Upload error: $e");
       return false;
     }
   }

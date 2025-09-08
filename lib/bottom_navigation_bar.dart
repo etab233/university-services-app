@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/settings.dart';
-import 'package:log_in/profile/myprofile.dart';
+import 'package:university_services/settings.dart';
+import 'package:university_services/profile/myprofile.dart';
 import './home_Screen/homePage.dart';
 
 void _navigateToPage(BuildContext context, int index, List widgets) {

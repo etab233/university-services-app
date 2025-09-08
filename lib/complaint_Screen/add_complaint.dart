@@ -40,7 +40,6 @@ class _AddCompState extends State<AddComp> {
   Future<bool> sendComp() async {
     final title = _titleController.text;
     final content = _contentController.text;
-
     if (token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Please wait, loading user data...")));
@@ -59,13 +58,12 @@ class _AddCompState extends State<AddComp> {
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
+            'Authorization':
+                'Bearer 7|HmUDc7QeJ7x0SgQAxMnr4JgnZS6jWQRDOXAfcQrZ06f35075'
           },
-          body: json.encode({
+          body: jsonEncode({
             'subject': title,
             'description': content,
-            'created_at': DateTime.now().toIso8601String(),
-            'user_id': user_id,
           }),
         );
         if (response.statusCode == 200 || response.statusCode == 201) {

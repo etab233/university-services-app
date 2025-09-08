@@ -1,8 +1,13 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:university_services/Constants.dart';
+import 'package:university_services/bottom_navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'profileservice.dart';
 import 'profileimage.dart';
+import 'package:http/http.dart' as http;
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -13,8 +18,15 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile> {
   Uint8List? _image;
-  Map<String, dynamic>? userData;
   bool isLoading = true;
+  String? name;
+  String? email;
+  int? year;
+  String? department;
+  int? id;
+  String? role;
+  String? position;
+  String? profile_image;
   final ProfileService _profileService = ProfileService();
   final String baseUrl = 'http://your-domain.com/storage/';
 
@@ -24,25 +36,69 @@ class _MyProfileState extends State<MyProfile> {
     loadProfileData();
   }
 
-  void loadProfileData() async {
-    final data = await _profileService.fetchProfile(1);
-    if (data != null) {
-      setState(() {
-        userData = data;
-        isLoading = false;
+  Future<void> fetchProfile() async {
+    String fetchUrl = '${Constants.baseUrl}/profile';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? role = await prefs.getString("role");
+    String? token = await prefs.getString("Token");
+    try {
+      final response = await http.get(Uri.parse(fetchUrl), headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
       });
-    }
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        if (role == "student") {
+          prefs.setString('department', data["department"]);
+          prefs.setInt('year', data["year"]);
+        } else {
+          prefs.setString('position', data["position"]);
+        }
+        if (data["profile_image"] != null) {
+          prefs.setString('profile_img', data["profile_image"]);
+        }
+      } else {
+        Constants.showMessage(context, data["message"], Colors.red);
+      }
+    } catch (e) {}
   }
 
+  void loadProfileData() async {
+    await fetchProfile();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    id = await prefs.getInt("id");
+    role = await prefs.getString("role");
+    name = await prefs.getString("name");
+    email = await prefs.getString("email");
+    profile_image = await prefs.getString("profile_img");
+    if (role == "student") {
+      department = await prefs.getString("department");
+      year = await prefs.getInt("year");
+    }
+    if (role == "admin") {
+      position = await prefs.getString("position");
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // Open image picker and upload selected profile image
   void selectImage() async {
-    final img = await pickImage(ImageSource.gallery);
-    if (img == null) return;
+    final Uint8List? img = await pickImage(ImageSource.gallery);
+    if (img == null) return; // نتأكد من وجود الصورة
 
     setState(() {
       _image = img;
     });
 
-    bool success = await _profileService.uploadProfileImage(img, 'profile.jpg');
+    bool success = await _profileService.uploadProfileImage(
+      imageBytes: img,
+      filename: 'profile.jpg',
+      email: email ?? '',
+    );
+
     if (success) {
       loadProfileData();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,115 +113,118 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading || userData == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    final user = userData!;
-    final String imagePath = user['profile_image'] ?? 'default.png';
-
+    final String imagePath = profile_image ?? 'default.png';
+// Decide which image to display: new picked image, server image, or default asset
     ImageProvider profileImage;
     if (_image != null) {
       profileImage = MemoryImage(_image!);
     } else if (imagePath != 'default.png') {
       profileImage = NetworkImage(baseUrl + imagePath);
     } else {
-      profileImage = const AssetImage('images/default.png');
+      profileImage = const AssetImage('assets/imgs/default.png');
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Center(
-          child: Text(
+        bottomNavigationBar: Bottom_navigation_bar(),
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Text(
             'My Profile',
             style: TextStyle(
                 fontSize: 24, color: Colors.white, fontWeight: FontWeight.w600),
           ),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
+          ),
         ),
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.chevron_left, size: 40, color: Colors.white),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: SingleChildScrollView(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Text(user['name']?.toString() ?? 'N/A'),
+        body: isLoading == true
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Constants.primaryColor,
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(15),
+                child: SingleChildScrollView(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          // User name and profile image section
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                title: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text(
+                                    name?.toString() ?? 'N/A',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: 64,
+                                  backgroundImage: profileImage,
+                                ),
+                                Positioned(
+                                  bottom: -6,
+                                  right: 45,
+                                  child: IconButton(
+                                    onPressed: selectImage,
+                                    icon:
+                                        const Icon(Icons.photo_camera_rounded),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
-                        titleTextStyle: const TextStyle(fontSize: 24),
-                        subtitleTextStyle: const TextStyle(
-                            fontSize: 14, color: Color(0xff616161)),
-                        subtitle: Text(
-                            "Created at: ${user['created_at']?.toString() ?? 'N/A'}"),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 64,
-                          backgroundImage: profileImage,
+                        const SizedBox(height: 10),
+                        const Text("User Details:",
+                            style: TextStyle(fontSize: 24)),
+                        const SizedBox(height: 5),
+                        // Display student or admin details
+                        ListTile(
+                          title: const Text('ID:'),
+                          subtitle: Text(id.toString()),
                         ),
-                        Positioned(
-                          bottom: -6,
-                          right: 45,
-                          child: IconButton(
-                            onPressed: selectImage,
-                            icon: const Icon(Icons.photo_camera_rounded),
+                        if (role == "student") ...[
+                          ListTile(
+                            title: const Text('Year:'),
+                            subtitle: Text(year?.toString() ?? 'N/A'),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
+                          ListTile(
+                            title: const Text('Department:'),
+                            subtitle: Text(department ?? 'N/A'),
+                          ),
+                        ] else if (role == "admin") ...[
+                          ListTile(
+                            title: const Text('Position:'),
+                            subtitle: Text(position ?? 'N/A'),
+                          ),
+                        ],
+                        ListTile(
+                          title: const Text('Role:'),
+                          subtitle: Text(role ?? 'N/A'),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text("Contact Information:",
+                            style: TextStyle(fontSize: 24)),
+                        const SizedBox(height: 5),
+                        ListTile(
+                          title: const Text('Email:'),
+                          subtitle: Text(email ?? 'N/A'),
+                        ),
+                      ]),
                 ),
-
-                const SizedBox(height: 10),
-                const Text("User Details", style: TextStyle(fontSize: 24)),
-                const SizedBox(height: 5),
-
-                // Student or Admin details
-                if (user.containsKey('student_id')) ...[
-                  ListTile(
-                    title: const Text('Student ID'),
-                    subtitle: Text(user['student_id'] ?? 'N/A'),
-                  ),
-                  ListTile(
-                    title: const Text('Year'),
-                    subtitle: Text(user['year'] ?? 'N/A'),
-                  ),
-                  ListTile(
-                    title: const Text('Department'),
-                    subtitle: Text(user['department'] ?? 'N/A'),
-                  ),
-                ] else if (user.containsKey('position')) ...[
-                  ListTile(
-                    title: const Text('Position'),
-                    subtitle: Text(user['position'] ?? 'N/A'),
-                  ),
-                ],
-
-                const SizedBox(height: 10),
-                const Text("Contact Information",
-                    style: TextStyle(fontSize: 24)),
-                const SizedBox(height: 5),
-                ListTile(
-                  title: const Text('Email'),
-                  subtitle: Text(user['email'] ?? 'N/A'),
-                ),
-              ]),
-        ),
-      ),
-    );
+              ));
   }
 }

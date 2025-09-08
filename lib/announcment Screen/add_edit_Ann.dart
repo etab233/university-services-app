@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:log_in/announcment%20Screen/AnnList.dart';
+import 'package:university_services/announcment%20Screen/AnnList.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
-import 'notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Add_Edit_Announcement extends StatefulWidget {

@@ -23,7 +23,7 @@ class Complaints {
         json['description'], dateFormat, json['id']);
   }
 }
-
+ 
 class ViewComp extends StatefulWidget {
   const ViewComp();
   @override
