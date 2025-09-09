@@ -70,7 +70,7 @@ class _AcceptedObjectionsState extends State<AcceptedObjections> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: Bottom_navigation_bar(),
+      bottomNavigationBar: BottomNavigation(currentIndex: -1,),
       appBar: AppBar(
         title: Text(
           "Accepted Objections",

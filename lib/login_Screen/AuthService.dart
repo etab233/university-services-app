@@ -9,15 +9,18 @@ class AuthService {
   static Future<Map<String, dynamic>> login({
     required String id,
     required String password,
-    required String email,
+    String? email,
   }) async {
     final url = Uri.parse('${Constants.baseUrl}/login');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final body = {
       'unique_id': id,
       'password': password,
-      'email' : email,
     };
+
+    if (email != null) {
+      body['email'] = email;
+    }
 
     try {
       final response = await http.post(
@@ -32,12 +35,15 @@ class AuthService {
       if (response.statusCode == 200) {
         await prefs.setString('token', data['Token']);
         await prefs.setString('role', data['User']["role"]);
+        await prefs.setString('id', data['User']["unique_id"]);
         await prefs.setString('id', data['User']["unique_id"].toString());
         await prefs.setString('name', data['User']["name"]);
         await prefs.setString('created_at', data['User']["created_at"]);
         await prefs.setString('email', data['User']["email"]);
         await prefs.setBool('success', true);
-        return { 
+        // String? token = await prefs.getString('token') ?? "token is NULL";
+        // print(token);
+        return {
           'success': true,
           'message': data['message'],
           'Token': data['Token'],
@@ -58,6 +64,11 @@ class AuthService {
       };
     }
   }
+
+  // void showMessage(String message) {
+  //   ScaffoldMessenger.of(context as BuildContext)
+  //       .showSnackBar(SnackBar(content: Text(message)));
+  // }
 
   static Future<void> logout(BuildContext context) async {
     String? token = await getToken();

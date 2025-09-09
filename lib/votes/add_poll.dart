@@ -288,7 +288,7 @@ class _AddPollState extends State<AddPoll> {
         ),
       ),
       // شريط التنقل السفلي
-      bottomNavigationBar: Bottom_navigation_bar(),
+      bottomNavigationBar: BottomNavigation(currentIndex: -1,),
     );
   }
 }

@@ -219,7 +219,7 @@ class _VoteListState extends State<VoteList> {
       ]),
 
       // شريط التنقل السفلي
-      bottomNavigationBar: Bottom_navigation_bar(),
+      bottomNavigationBar: BottomNavigation(currentIndex: 0,),
     );
   }
 }

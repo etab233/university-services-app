@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:university_services/Constants.dart';
-import 'package:university_services/bottom_navigation_bar.dart';
 import 'package:university_services/login_Screen/AuthService.dart';
 import 'package:university_services/login_Screen/forgotPassword.dart';
 
@@ -12,26 +11,18 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  bool isSwitched1 = true;
-  bool isSwitched2 = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Settings",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-        ),
+        title: Text("Settings",
+            style: TextStyle(
+                fontSize: 24,
+                color: Colors.black,
+                fontWeight: FontWeight.w600)),
+        automaticallyImplyLeading: false,
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 30,
-              color: Constants.primaryColor,
-            )),
+        backgroundColor: Constants.primaryColor,
       ),
       body: SingleChildScrollView(
           child: Column(

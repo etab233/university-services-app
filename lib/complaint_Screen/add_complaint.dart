@@ -58,8 +58,7 @@ class _AddCompState extends State<AddComp> {
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization':
-                'Bearer 7|HmUDc7QeJ7x0SgQAxMnr4JgnZS6jWQRDOXAfcQrZ06f35075'
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode({
             'subject': title,
@@ -98,11 +97,13 @@ class _AddCompState extends State<AddComp> {
     }
   }
 
-  final _formkey=GlobalKey<FormState>();
+  final _formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
+      bottomNavigationBar: const BottomNavigation(
+        currentIndex: -1,
+      ),
       appBar: AppBar(
         title: const Text(
           "Whats your problem?",
@@ -181,17 +182,18 @@ class _AddCompState extends State<AddComp> {
                             width: 15,
                           ),
                           Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("$name", style: const TextStyle(fontSize: 20)),
-                            Text(
-                              DateFormat('hh:mm a - dd-MM-yyyy')
-                                  .format(DateTime.now()),
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 14),
-                            ),
-                          ],
-                        ),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("$name",
+                                  style: const TextStyle(fontSize: 20)),
+                              Text(
+                                DateFormat('hh:mm a - dd-MM-yyyy')
+                                    .format(DateTime.now()),
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 14),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                       const SizedBox(
@@ -200,71 +202,74 @@ class _AddCompState extends State<AddComp> {
                       Form(
                         key: _formkey,
                         child: Column(
-                      children: [
-                        TextFormField(
-                        maxLength: 225,
-                        maxLines: null,
-                        controller: _titleController,
-                        validator:(value) {
-                            if(value== null || value.isEmpty){
-                              return "Enter Title of your complaint please !";
-                            }
-                            return null;
-                          },
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: InputDecoration(
-                          labelText: "title",
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.grey)),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Constants.primaryColor,
-                            ),
-                          ),
-                          focusedErrorBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Constants.primaryColor)),
-                          errorBorder: const OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Constants.primaryColor)),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                          validator: (value) {
-                          if( value ==null || value.isEmpty){
-                            return "Enter content please";
-                          }
-                          if(value.length<10){
-                            return " 10 characters at least !";
-                          }
-                          return null;
-                        },
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          maxLines: null,
-                          controller: _contentController,
-                          decoration: InputDecoration(
-                            labelText: "content",
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide:
-                                    const BorderSide(color: Colors.grey)),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Constants.primaryColor,
+                          children: [
+                            TextFormField(
+                              maxLength: 225,
+                              maxLines: null,
+                              controller: _titleController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter Title of your complaint please !";
+                                }
+                                return null;
+                              },
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              decoration: InputDecoration(
+                                labelText: "title",
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        const BorderSide(color: Colors.grey)),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Constants.primaryColor,
+                                  ),
+                                ),
+                                focusedErrorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor)),
+                                errorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor)),
                               ),
                             ),
-                            focusedErrorBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Constants.primaryColor)),
-                            errorBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Constants.primaryColor)),
-                          ),
-                        ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Enter content please";
+                                }
+                                if (value.length < 10) {
+                                  return " 10 characters at least !";
+                                }
+                                return null;
+                              },
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              maxLines: null,
+                              controller: _contentController,
+                              decoration: InputDecoration(
+                                labelText: "content",
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        const BorderSide(color: Colors.grey)),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Constants.primaryColor,
+                                  ),
+                                ),
+                                focusedErrorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor)),
+                                errorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor)),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -309,7 +314,8 @@ class _AddCompState extends State<AddComp> {
                                 });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 252, 184, 179),
+                            backgroundColor:
+                                const Color.fromARGB(255, 252, 184, 179),
                             foregroundColor: Colors.black,
                             elevation: 10,
                           ),
@@ -326,7 +332,7 @@ class _AddCompState extends State<AddComp> {
                         height: 45,
                         width: 120,
                         child: ElevatedButton(
-                          onPressed: ()async {
+                          onPressed: () async {
                             sendComp();
                           },
                           style: ElevatedButton.styleFrom(
@@ -335,7 +341,8 @@ class _AddCompState extends State<AddComp> {
                             elevation: 5,
                           ),
                           child: const Text("Send",
-                              style: TextStyle(fontSize: 20, color: Colors.white)),
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white)),
                         ),
                       ),
                     ],

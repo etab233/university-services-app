@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:university_services/home_Screen/mainPage.dart';
 import 'package:university_services/login_Screen/register.dart';
 import 'forgotPassword.dart';
 import 'AuthService.dart';
@@ -48,8 +49,8 @@ class _Log_inState extends State<Log_in> {
 
   void _login() async {
     // التحقق من الفورم
-    //داخل كل حقل validator يشتغل كل  validate التابع 
-    // إذا وجد حقل واحد على الأقل غير صالح يتوقف تسجيل الدخول ولا يكمل 
+    //داخل كل حقل validator يشتغل كل  validate التابع
+    // إذا وجد حقل واحد على الأقل غير صالح يتوقف تسجيل الدخول ولا يكمل
     if (!_formkey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
@@ -60,7 +61,7 @@ class _Log_inState extends State<Log_in> {
         id: id,
         password: password,
       );
- 
+
       _showSnackbar(result['message'], isError: !result['success']);
 
       if (result['success']) {
@@ -76,7 +77,7 @@ class _Log_inState extends State<Log_in> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) =>const MainScreen()),
+            MaterialPageRoute(builder: (context) => const MainScreen()),
           );
         }
       }
@@ -283,32 +284,6 @@ class _Log_inState extends State<Log_in> {
           ),
         ),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding: EdgeInsets.all(15),
-      //   child: ElevatedButton(
-      //     onPressed: () => Navigator.push(
-      //         context, MaterialPageRoute(builder: (context) => Register())),
-      //     style: ElevatedButton.styleFrom(
-      //       // backgroundColor: Constants.primaryColor/,
-      //       foregroundColor: Color(0xffffffff),
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(15),
-      //         side: BorderSide(color: Colors.blue, width: 2),
-      //       ),
-      //       elevation: 5,
-      //     ),
-      //     child: Padding(
-      //       padding: EdgeInsets.all(7),
-      //       child: const Text(
-      //         "Sign Up",
-      //         style: TextStyle(
-      //             fontSize: 20,
-      //             fontWeight: FontWeight.bold,
-      //             color: Colors.blue),
-      //       ),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

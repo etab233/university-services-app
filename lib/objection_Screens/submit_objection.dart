@@ -1,15 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD:lib/objection_Screens/student/submit_objection.dart
-import 'package:log_in/login_Screen/AuthService.dart';
-import '../../home_Screen/homepage.dart';
-import '../../Constants.dart';
-=======
+
 import 'package:university_services/login_Screen/AuthService.dart';
 import '../home_Screen/homePage.dart';
 import '../Constants.dart';
 import '../bottom_navigation_bar.dart';
->>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e:lib/objection_Screens/submit_objection.dart
 import 'package:http/http.dart' as http;
 
 class Objection extends StatefulWidget {
@@ -111,18 +106,6 @@ class ObjectionState extends State<Objection> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-<<<<<<< HEAD:lib/objection_Screens/student/submit_objection.dart
-          backgroundColor: Constants.primaryColor,
-          title: const Text(
-            "Your Objection",
-            style: TextStyle(fontSize: 24),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
-          ],
-        ),
-=======
             backgroundColor: Constants.primaryColor,
             title: const Text(
               "Your Objection",
@@ -135,8 +118,7 @@ class ObjectionState extends State<Objection> {
                   Icons.arrow_back,
                   size: 30,
                 ))),
-        bottomNavigationBar: Bottom_navigation_bar(),
->>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e:lib/objection_Screens/submit_objection.dart
+        bottomNavigationBar: BottomNavigation(currentIndex: -1,),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(children: [

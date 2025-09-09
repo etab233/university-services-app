@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university_services/complaint_Screen/add_complaint.dart';
 import 'package:university_services/objection_Screens/select_subject.dart';
-import 'package:university_services/votes/poll_card.dart';
 import 'package:university_services/votes/votelist.dart';
 import '../complaint_Screen/view_complaints.dart';
 import '../announcment Screen/AnnList.dart';
@@ -10,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../announcment Screen/notifications.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../bottom_navigation_bar.dart';
 
 // متحولات لرسم الدوائر المتداخلة بالشبكة
 double circleSize = 35;
@@ -96,7 +94,7 @@ class HomePageState extends State<HomePage> {
     loadPublishers();
   }
 
-  int currentIndex=0;
+  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -290,22 +288,29 @@ class HomePageState extends State<HomePage> {
                                         case 0:
                                           Navigator.push(
                                               context,
-                                              MaterialPageRoute(builder: (context) => AnnouncementList()));
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AnnouncementList()));
                                           break;
                                         case 1:
                                           () async {
-                                            final prefs =await SharedPreferences.getInstance();
-                                            final role =prefs.getString('role');
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            final role =
+                                                prefs.getString('role');
                                             if (role == 'admin') {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) => ViewComp()));
+                                                      builder: (context) =>
+                                                          ViewComp()));
                                             } else {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) => AddComp()));
+                                                      builder: (context) =>
+                                                          AddComp()));
                                             }
                                             ;
                                           }();
@@ -317,13 +322,13 @@ class HomePageState extends State<HomePage> {
                                                   builder: (context) =>
                                                       SelectSub()));
                                           break;
-                                        // case 3:
-                                        //   Navigator.pushReplacement(
-                                        //       context,
-                                        //       MaterialPageRoute(
-                                        //           builder: (context) =>
-                                        //               Vote()));
-                                        //  break;
+                                        case 3:
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      VoteList()));
+                                          break;
                                       }
                                     });
                                   },

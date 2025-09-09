@@ -1,13 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
-<<<<<<< HEAD
-import 'package:log_in/Constants.dart';
-=======
 import 'package:university_services/Constants.dart';
 import 'package:university_services/bottom_navigation_bar.dart';
->>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e
 import 'package:http/http.dart' as http;
 import 'package:university_services/login_Screen/AuthService.dart';
 
@@ -92,6 +87,7 @@ class _OpenObState extends State<OpenOb> {
         title: const Text(
           "Open Objection",
           style: TextStyle(
+            color: Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.w600,
           ),
@@ -101,10 +97,11 @@ class _OpenObState extends State<OpenOb> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back, size: 30, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
         ),
         centerTitle: true,
       ),
+      bottomNavigationBar: BottomNavigation(currentIndex: -1),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(

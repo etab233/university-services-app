@@ -96,6 +96,7 @@ class _PollCardState extends State<PollCard> {
     } catch (e) {
       debugPrint("فشل في جلب النتائج: $e");
     } finally {
+      if (!mounted) return;
       setState(() => isLoadingResults = false);
     }
   }
@@ -116,7 +117,7 @@ class _PollCardState extends State<PollCard> {
   }
 
   // حساب عدد الأصوات الكلي
-  int get totalvotes => pollOptions.fold(0, (a, b) => a + (b.votesCount?? 0));
+  int get totalvotes => pollOptions.fold(0, (a, b) => a + (b.votesCount ?? 0));
 
   // التصويت لخيار محدد
   Future<void> vote() async {
@@ -254,16 +255,15 @@ class _PollCardState extends State<PollCard> {
                 height: 10,
               ),
               // عرض الخيارات
-               ...List.generate(pollOptions.length, (index) {
+              ...List.generate(pollOptions.length, (index) {
                 final option = pollOptions[index];
-                final percent = totalvotes == 0
-                    ? 0.0
-                    : (option.votesCount) / totalvotes;
-                //عدلت الshowResults 
-                final showResults = isAdmin |hasVoted| isEnded;
+                final percent =
+                    totalvotes == 0 ? 0.0 : (option.votesCount) / totalvotes;
+                //عدلت الshowResults
+                final showResults = isAdmin | hasVoted | isEnded;
 
                 // إظهار أزرار الاختيار إذا لم تنتهي المدة والطالب لم يصوت
-                if (!showResults && isStudent && !_isStopped) {                                                                  
+                if (!showResults && isStudent && !_isStopped) {
                   return Row(
                     children: [
                       Expanded(
@@ -277,7 +277,7 @@ class _PollCardState extends State<PollCard> {
                                 });
                               })),
                       // زر التصويت يظهر عند آخر خيار
-                       if (index == pollOptions.length - 1 && !hasVoted)
+                      if (index == pollOptions.length - 1 && !hasVoted)
                         (ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,

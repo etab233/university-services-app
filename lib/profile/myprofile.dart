@@ -125,19 +125,14 @@ class _MyProfileState extends State<MyProfile> {
     }
 
     return Scaffold(
-        bottomNavigationBar: Bottom_navigation_bar(),
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: Text(
             'My Profile',
             style: TextStyle(
-                fontSize: 24, color: Colors.white, fontWeight: FontWeight.w600),
+                fontSize: 24, color: Colors.black, fontWeight: FontWeight.w600),
           ),
           centerTitle: true,
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
-          ),
         ),
         body: isLoading == true
             ? Center(

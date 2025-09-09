@@ -91,7 +91,10 @@ class _SelectSubState extends State<SelectSub> {
             backgroundColor: Constants.primaryColor,
             title: const Text(
               "Grade Objection",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600),
             ),
             centerTitle: true,
             leading: IconButton(
@@ -100,7 +103,7 @@ class _SelectSubState extends State<SelectSub> {
                 },
                 icon: Icon(
                   Icons.arrow_back,
-                  // color: Colors.white,
+                  color: Colors.black,
                   size: 30,
                 )),
             actions: [
@@ -117,6 +120,9 @@ class _SelectSubState extends State<SelectSub> {
                   ),
                 )
             ]),
+        bottomNavigationBar: BottomNavigation(
+          currentIndex: -1,
+        ),
         body: SingleChildScrollView(
           child: Container(
             padding:

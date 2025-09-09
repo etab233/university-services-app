@@ -14,16 +14,22 @@ class Complaints {
   final int compId;
   final String? imageUrl;
 
-  Complaints(this.student_name, this.title, this.content, this.date, this.compId, this.imageUrl);
+  Complaints(this.student_name, this.title, this.content, this.date,
+      this.compId, this.imageUrl);
   factory Complaints.fromJson(Map<String, dynamic> json) {
     String date = json['created_at'];
     String dateFormat =
         DateFormat('hh:mm a - dd/MM/yyyy').format(DateTime.parse(date));
-    return Complaints(json['user']['name'], json['subject'],
-        json['description'], dateFormat, json['id'], json['user']['profile_image']);
+    return Complaints(
+        json['user']['name'],
+        json['subject'],
+        json['description'],
+        dateFormat,
+        json['id'],
+        json['user']['profile_image']);
   }
 }
- 
+
 class ViewComp extends StatefulWidget {
   const ViewComp();
   @override
@@ -44,8 +50,7 @@ class _ViewCompState extends State<ViewComp> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('Token');
     try {
-      final response = await http.get(url, 
-      headers: {
+      final response = await http.get(url, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       });
@@ -60,12 +65,12 @@ class _ViewCompState extends State<ViewComp> {
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
-      print('Error: $e');
+      Constants.showMessage(context, "$e", Colors.red);
       setState(() {
         isLoading = false;
       });
     }
-  } 
+  }
 
   Future<void> deleteComplaint(int compId) async {
     final prefs = await SharedPreferences.getInstance();
@@ -98,7 +103,9 @@ class _ViewCompState extends State<ViewComp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
+      bottomNavigationBar: const BottomNavigation(
+        currentIndex: -1,
+      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
@@ -182,12 +189,16 @@ class _ViewCompState extends State<ViewComp> {
                                     children: [
                                       CircleAvatar(
                                         radius: 20,
-                                        backgroundImage: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
-                                           ? NetworkImage(item.imageUrl!)
-                                           : null,
-                                        child: (item.imageUrl == null || item.imageUrl!.isEmpty)
-                                           ? const Icon(Icons.person)
-                                           : null,),
+                                        backgroundImage:
+                                            (item.imageUrl != null &&
+                                                    item.imageUrl!.isNotEmpty)
+                                                ? NetworkImage(item.imageUrl!)
+                                                : null,
+                                        child: (item.imageUrl == null ||
+                                                item.imageUrl!.isEmpty)
+                                            ? const Icon(Icons.person)
+                                            : null,
+                                      ),
                                       const SizedBox(
                                         width: 5,
                                       ),

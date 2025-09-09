@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-<<<<<<< HEAD
-import 'package:log_in/login_Screen/AuthService.dart';
-=======
 import 'package:university_services/login_Screen/AuthService.dart';
 import 'package:university_services/objection_Screens/admin/view_accepted_objections.dart';
 import 'package:university_services/objection_Screens/admin/card_element.dart';
 import '../../bottom_navigation_bar.dart';
->>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e
 import 'dart:convert';
 import '../../Constants.dart';
 
@@ -174,6 +170,9 @@ class _ViewObjectionsState extends State<ViewObjections> {
                 size: 30,
               ))
         ],
+      ),
+      bottomNavigationBar: BottomNavigation(
+        currentIndex: -1,
       ),
       body: isLoading
           ? const Center(
