@@ -23,7 +23,7 @@ class Complaints {
         json['description'], dateFormat, json['id'], json['user']['profile_image']);
   }
 }
-
+ 
 class ViewComp extends StatefulWidget {
   const ViewComp();
   @override

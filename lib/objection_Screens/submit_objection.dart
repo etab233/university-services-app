@@ -1,8 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+<<<<<<< HEAD:lib/objection_Screens/student/submit_objection.dart
 import 'package:log_in/login_Screen/AuthService.dart';
 import '../../home_Screen/homepage.dart';
 import '../../Constants.dart';
+=======
+import 'package:university_services/login_Screen/AuthService.dart';
+import '../home_Screen/homePage.dart';
+import '../Constants.dart';
+import '../bottom_navigation_bar.dart';
+>>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e:lib/objection_Screens/submit_objection.dart
 import 'package:http/http.dart' as http;
 
 class Objection extends StatefulWidget {
@@ -28,15 +35,17 @@ class ObjectionState extends State<Objection> {
   bool isLoading2 = false;
   String duration = "";
   Future<void> fetchDuration() async {
-    final url = Uri.parse("${Constants.baseUrl}/objections/dates");
+    final url =
+        Uri.parse("${Constants.baseUrl}/objections/dates/${widget.sub_name}");
     final token = await AuthService.getToken();
     try {
-      final response = await http.post(url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-          body: json.encode({'subject_name': widget.sub_name}));
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
       final data = await jsonDecode(response.body);
       if (response.statusCode == 200) {
         setState(() {
@@ -76,7 +85,7 @@ class ObjectionState extends State<Objection> {
             'subject_name': widget.sub_name
           }));
       final data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         Constants.showMessage(context, data['message'], Colors.green);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => HomePage()),);
@@ -102,6 +111,7 @@ class ObjectionState extends State<Objection> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+<<<<<<< HEAD:lib/objection_Screens/student/submit_objection.dart
           backgroundColor: Constants.primaryColor,
           title: const Text(
             "Your Objection",
@@ -112,6 +122,21 @@ class ObjectionState extends State<Objection> {
             IconButton(onPressed: () {}, icon: const Icon(Icons.settings))
           ],
         ),
+=======
+            backgroundColor: Constants.primaryColor,
+            title: const Text(
+              "Your Objection",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
+            ),
+            centerTitle: true,
+            leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 30,
+                ))),
+        bottomNavigationBar: Bottom_navigation_bar(),
+>>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e:lib/objection_Screens/submit_objection.dart
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(children: [

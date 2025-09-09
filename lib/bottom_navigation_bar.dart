@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import './home_Screen/homepage.dart';
 import './settings.dart';
 import './profile/myprofile.dart';
+=======
+import 'package:university_services/settings.dart';
+import 'package:university_services/profile/myprofile.dart';
+import './home_Screen/homePage.dart';
+>>>>>>> 4b6224479fd278443d8a0122472ba76d9606474e
 
 class BottomNavigation extends StatelessWidget {
   final int currentIndex;

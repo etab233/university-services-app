@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/complaint_Screen/add_complaint.dart';
-import 'package:log_in/objection_Screens/select_subject.dart';
+import 'package:university_services/complaint_Screen/add_complaint.dart';
+import 'package:university_services/objection_Screens/select_subject.dart';
+import 'package:university_services/votes/poll_card.dart';
+import 'package:university_services/votes/votelist.dart';
 import '../complaint_Screen/view_complaints.dart';
 import '../announcment Screen/AnnList.dart';
 import '../Constants.dart';

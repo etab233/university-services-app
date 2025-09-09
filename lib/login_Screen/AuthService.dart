@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:log_in/login_Screen/log_in.dart';
+import 'package:university_services/login_Screen/log_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:log_in/Constants.dart';
+import 'package:university_services/Constants.dart';
 
 class AuthService {
   static Future<Map<String, dynamic>> login({
@@ -32,7 +32,10 @@ class AuthService {
       if (response.statusCode == 200) {
         await prefs.setString('token', data['Token']);
         await prefs.setString('role', data['User']["role"]);
-        await prefs.setString('id', data['User']["unique_id"]);
+        await prefs.setString('id', data['User']["unique_id"].toString());
+        await prefs.setString('name', data['User']["name"]);
+        await prefs.setString('created_at', data['User']["created_at"]);
+        await prefs.setString('email', data['User']["email"]);
         await prefs.setBool('success', true);
         return { 
           'success': true,

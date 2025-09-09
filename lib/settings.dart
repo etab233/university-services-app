@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/Constants.dart';
-import 'package:log_in/bottom_navigation_bar.dart';
-import 'package:log_in/login_Screen/AuthService.dart';
-import 'package:log_in/login_Screen/forgotPassword.dart';
+import 'package:university_services/Constants.dart';
+import 'package:university_services/bottom_navigation_bar.dart';
+import 'package:university_services/login_Screen/AuthService.dart';
+import 'package:university_services/login_Screen/forgotPassword.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -49,46 +49,6 @@ class _SettingsState extends State<Settings> {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => ForgotPassword()));
             },
-          ),
-          Divider(),
-          ListTile(
-            title: Text("Notifications"),
-            leading: Icon(
-              Icons.notifications,
-              color: Constants.primaryColor,
-            ),
-            trailing: Switch(
-              value: isSwitched1,
-              onChanged: (value) {
-                setState(() {
-                  isSwitched1 = value;
-                });
-              },
-              activeColor: Constants.primaryColor,
-              activeTrackColor: Colors.blue.withOpacity(0.4),
-              inactiveThumbColor: Colors.blueGrey,
-              inactiveTrackColor: Colors.blueGrey.withOpacity(0.4),
-            ),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(
-              Icons.dark_mode,
-              color: Colors.blue,
-            ),
-            title: Text("Dark mode"),
-            trailing: Switch(
-              value: isSwitched2,
-              activeColor: Colors.blue,
-              activeTrackColor: Colors.blue.withOpacity(0.4),
-              inactiveThumbColor: Colors.blueGrey,
-              inactiveTrackColor: Colors.blueGrey.withOpacity(0.4),
-              onChanged: (value) {
-                setState(() {
-                  isSwitched2 = value;
-                });
-              },
-            ),
           ),
           Divider(),
           ListTile(

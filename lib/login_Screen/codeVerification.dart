@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:log_in/login_Screen/createNewPassword.dart';
+import 'package:university_services/login_Screen/createNewPassword.dart';
 import '../Constants.dart';
 
 class CodeVerification extends StatefulWidget {
@@ -62,7 +62,15 @@ class _CodeVerificationState extends State<CodeVerification> {
           ),
         ),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 30,
+              color: Constants.primaryColor,
+            )),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -157,33 +165,6 @@ class _CodeVerificationState extends State<CodeVerification> {
                 ),
                 const SizedBox(
                   height: 15,
-                ),
-                Container(
-                  width: 350,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Go Back',
-                      style: TextStyle(
-                        color: Constants.primaryColor,
-                        fontSize: 20,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.white,
-                      // shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(10)),
-                      elevation: 5,
-                      side: BorderSide(
-                        width: 2,
-                        color: Constants.primaryColor,
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
