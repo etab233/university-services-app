@@ -14,7 +14,7 @@ import 'dart:convert';
 
 // متحولات لرسم الدوائر المتداخلة بالشبكة
 double circleSize = 35;
-double overlap = 10;
+double overlap = 12;
 String? name;
 
 // صف يحوي اسم و صورة المستخدم لاستخدامه لرسم الدوائر المتداخلة بكل خلية بالشبكة

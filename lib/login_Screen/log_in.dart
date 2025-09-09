@@ -50,7 +50,6 @@ class _Log_inState extends State<Log_in> {
     if (!_formkey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
-
     try {
       final id = _idController.text.trim();
       final password = _passwordController.text.trim();
@@ -58,7 +57,7 @@ class _Log_inState extends State<Log_in> {
         id: id,
         password: password,
       );
-
+ 
       _showSnackbar(result['message'], isError: !result['success']);
 
       if (result['success']) {
