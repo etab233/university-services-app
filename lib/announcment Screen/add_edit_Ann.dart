@@ -4,9 +4,8 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:log_in/announcment%20Screen/AnnList.dart';
 import '../Constants.dart';
-import '../bottom_navigation_bar.dart';
-import 'notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../bottom_navigation_bar.dart';
 
 class Add_Edit_Announcement extends StatefulWidget {
   final Announcement? announcement; // لو موجود إعلان ونريد تعديله
@@ -58,8 +57,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
       final token = prefs.getString('Token');
       final isEdite = widget.announcement != null;
       final postUrl = isEdite
-          ? Uri.parse(
-              '${Constants.baseUrl}/admin/announcements/${widget.announcement!.annid}')
+          ? Uri.parse('${Constants.baseUrl}/admin/announcements/${widget.announcement!.annid}')
           : Uri.parse('${Constants.baseUrl}/admin/announcements');
 
       final response = await (isEdite
@@ -123,6 +121,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       appBar: AppBar(
         title: const Text(
           "What's new?",
@@ -187,8 +186,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                           children: [
                             Text("$name", style: const TextStyle(fontSize: 20)),
                             Text(
-                              DateFormat('hh:mm a - dd-MM-yyyy')
-                                  .format(DateTime.now()),
+                              DateFormat('hh:mm a - dd-MM-yyyy').format(DateTime.now()),
                               style: const TextStyle(
                                   color: Colors.grey, fontSize: 14),
                             ),
@@ -223,8 +221,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                   ElevatedButton(
                     onPressed: () {
                       if (_AddController.text.trim().isEmpty) {
-                        Navigator.pop(
-                            context); // لا شيء يتم حذفه إذا الحقل فارغ
+                        Navigator.pop(context); // لا شيء يتم حذفه إذا الحقل فارغ
                       } else {
                         showDialog(
                           context: context,
@@ -242,9 +239,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                     _AddController.clear();
-                                    setState(() {
-                                      Navigator.pop(context);
-                                    });
+                                    Navigator.pop(context);
                                   },
                                   child: const Text("Yes"),
                                 ),
@@ -285,8 +280,7 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
                                   final success = await publish();
                                   if (success) {
                                     // close AlertDialog إغلاف الصفحة من الجذر
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop();
+                                    Navigator.of(context, rootNavigator: true).pop();
                                     // تسكير صفحة إنشاء الإعلان والرجوع للخلف
                                     Navigator.pop(context, true);
                                   }
@@ -318,7 +312,6 @@ class Add_Edit_AnnouncementState extends State<Add_Edit_Announcement> {
           ],
         ),
       ),
-      bottomNavigationBar: Bottom_navigation_bar(),
     );
   }
 }

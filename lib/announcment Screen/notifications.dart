@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'notification_content.dart';
 import '../Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../bottom_navigation_bar.dart';
 
 class Notifications extends StatefulWidget {
   Notifications({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ bool isLoading=true;
 
 String? _shortenText(String? string, int limit) {
     List<String> words = string!.split(' ');
-    if (words.length < 5){
+    if (words.length < limit){
       return string;}
     else{
       return words.sublist(0, limit).join(' ') + '...';}
@@ -66,7 +67,9 @@ String? _shortenText(String? string, int limit) {
 
   @override
   Widget build(BuildContext build) {
+
     return Scaffold(
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       appBar: AppBar(
         title: const Text(
           "Notifications",
@@ -96,10 +99,10 @@ String? _shortenText(String? string, int limit) {
             final content=item['data'] ?['content'] ?? '';
             final created_at_str = item['created_at'];
             final created_at = created_at_str != null ? DateTime.tryParse(created_at_str) : null;
-            final formattedDate = created_at != null ? DateFormat('yyyy-MM-dd').format(created_at) : '';
+            final formattedDate = created_at != null ? DateFormat('HH-MM a   dd-MM-yyyy').format(created_at) : '';
             // لتمييز لون الاشعارات غير المقروءة 
             Color cardColor = item['read_at'] == null ? const Color.fromARGB(255, 237, 238, 239) : Colors.white;
-            return Card(
+            return Card( 
               elevation: 0.5, // ظل خفيف
               color: cardColor,
               child: ListTile(

@@ -4,8 +4,8 @@ import 'package:log_in/announcment%20Screen/add_edit_Ann.dart';
 import 'dart:convert';
 import '../Constants.dart';
 import 'package:intl/intl.dart';
-import '../bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../bottom_navigation_bar.dart';
 
 class Announcement {
   final String name; //اسم صاحب الإعلان
@@ -13,7 +13,7 @@ class Announcement {
   final String content; //محتوى الإعلان
   final int userid; // رقم تعريف المستخدم
   final int annid; // رقم تعريف الإعلان
-
+  final String? imageUrl;
   // باني بوسطاء
   Announcement(
       {required this.name,
@@ -21,7 +21,8 @@ class Announcement {
       required this.updated_at,
       required this.content,
       required this.userid,
-      required this.annid});
+      required this.annid,
+      this.imageUrl}); 
 
   // factory named constructor
   // Announcement إلى كائن من النوع API  تحول البيانات القادمة من
@@ -33,6 +34,7 @@ class Announcement {
       content: json['content'],
       userid: json['user']['id'],
       annid: json['id'],
+      imageUrl: json['user']['profile_image'],
     );
   }
 }
@@ -55,8 +57,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
     super.initState();
     initData();
   }
-
-  void initData() async {
+ 
+  void initData() async { 
     final prefs = await SharedPreferences
         .getInstance(); // الوصول للبيانات المخزنة في الجهاز
     final token = prefs.getString('Token'); // استرجاع التوكن
@@ -98,8 +100,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
           announcements =
               jsonData.map((item) => Announcement.fromJson(item)).toList();
           isLoading = false;
-        });
-      } else {
+        }); 
+      } else {  
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
@@ -152,6 +154,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
     // No Announcement وإذا لا يوجد إعلانات يتم عرض
     // وإلا يتم عرض الإعلانات من قاعدة البيانات  وبناء الواجهة
     return Scaffold(
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -268,9 +271,14 @@ class _AnnouncementListState extends State<AnnouncementList> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.person,
-                                        size: 22,
-                                        color: Constants.primaryColor),
+                                    CircleAvatar(
+                                      radius: 20,
+                                      backgroundImage: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+                                          ? NetworkImage(item.imageUrl!)
+                                          : null,
+                                      child: (item.imageUrl == null || item.imageUrl!.isEmpty)
+                                          ? const Icon(Icons.person)
+                                         : null,),
                                     const SizedBox(width: 8),
                                     Column(
                                       crossAxisAlignment:
@@ -313,9 +321,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                                 // مرر الإعلان الحالي لتقوم بملء محتوى الإعلان في الواجهة تلقائيًا
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Add_Edit_Announcement(
-                                                            announcement:
-                                                                item)));
+                                                        Add_Edit_Announcement(announcement:item)));
                                             if (result == true) {
                                               final prefs =
                                                   await SharedPreferences
@@ -338,21 +344,15 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                                     actions: [
                                                       TextButton(
                                                           onPressed: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(),
+                                                              Navigator.of(context).pop(),
                                                           child: const Text(
                                                               "cancel")),
                                                       TextButton(
                                                           onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(); // إغلاق مربع الحوار
-                                                            deleteAnnouncement(item
-                                                                .annid); // تنفيذ الحذف
+                                                            Navigator.of(context).pop(); // إغلاق مربع الحوار
+                                                            deleteAnnouncement(item.annid); // تنفيذ الحذف
                                                           },
-                                                          child: const Text(
-                                                              "Yes")),
+                                                          child: const Text("Yes")),
                                                     ],
                                                   );
                                                 });
@@ -388,7 +388,6 @@ class _AnnouncementListState extends State<AnnouncementList> {
                     ),
                   ],
                 ),
-      bottomNavigationBar: Bottom_navigation_bar(),
     );
   }
 }

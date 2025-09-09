@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../home_Screen/mainPage.dart';
 import 'forgotPassword.dart';
 import 'AuthService.dart';
-import '../home_Screen/homePage.dart';
 import '../Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,7 +15,7 @@ class _Log_inState extends State<Log_in> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final _formkey = GlobalKey<FormState>();
+  final _formkey = GlobalKey<FormState>(); // مفتاح التحكم بالنموذج 
   bool isLoading = false;
   void _showSnackbar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -27,6 +27,7 @@ class _Log_inState extends State<Log_in> {
     );
   }
 
+  // تابع لتخزين بيانات المستخدم محليّاً
   Future<void> saveUserData({
     required String token,
     required String role,
@@ -45,15 +46,16 @@ class _Log_inState extends State<Log_in> {
   }
 
   void _login() async {
+    // التحقق من الفورم
+    //داخل كل حقل validator يشتغل كل  validate التابع 
+    // إذا وجد حقل واحد على الأقل غير صالح يتوقف تسجيل الدخول ولا يكمل 
     if (!_formkey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
     try {
       final id = _idController.text.trim();
       final password = _passwordController.text.trim();
-      final email = _emailController.text.trim().isNotEmpty
-          ? _emailController.text.trim()
-          : null;
+      final email = _emailController.text.trim();
 
       final result = await AuthService.login(
         id: id,
@@ -76,7 +78,7 @@ class _Log_inState extends State<Log_in> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) =>const MainScreen()),
           );
         }
       }
@@ -124,8 +126,10 @@ class _Log_inState extends State<Log_in> {
                 const SizedBox(
                   height: 20,
                 ),
+                // حقل الرقم الجامعي
                 TextFormField(
                   controller: _idController,
+                  // بدء التحقق بعد أول تفاعل للمستخدم
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -138,17 +142,17 @@ class _Log_inState extends State<Log_in> {
                   },
                   decoration: InputDecoration(
                     labelText: "Id Number",
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(// حد الحقل عندما يكون غير مفعل
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: Color(0xff000000))),
-                    focusedBorder: const OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(// حد الحقل عندما يكون مفعل
                       borderSide: BorderSide(
                         color: Constants.primaryColor,
                       ),
                     ),
-                    focusedErrorBorder: const OutlineInputBorder(
+                    focusedErrorBorder: const OutlineInputBorder( // حد الحقل عند وجود خطأ والحقل مفعل
                         borderSide: BorderSide(color: Constants.primaryColor)),
-                    errorBorder: const OutlineInputBorder(
+                    errorBorder: const OutlineInputBorder( // عند وجود خطأ والحقل غير مفعل كماولة تسجيل الدخول دون ملء الحقول
                         borderSide: BorderSide(color: Constants.primaryColor)),
                     prefixIcon: const Icon(
                       Icons.badge,
@@ -160,6 +164,7 @@ class _Log_inState extends State<Log_in> {
                 const SizedBox(
                   height: 20,
                 ),
+                // حقل البريد الالكتروني 
                 TextFormField(
                   controller: _emailController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -191,6 +196,7 @@ class _Log_inState extends State<Log_in> {
                 const SizedBox(
                   height: 20,
                 ),
+                // حقل كلمة السر
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
@@ -226,6 +232,7 @@ class _Log_inState extends State<Log_in> {
                 const SizedBox(
                   height: 20,
                 ),
+                // زر في حال نسيان كلمة المرور
                 TextButton(
                     onPressed: () {
                       Navigator.push(

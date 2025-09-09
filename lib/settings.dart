@@ -33,7 +33,6 @@ class _SettingsState extends State<Settings> {
               color: Constants.primaryColor,
             )),
       ),
-      bottomNavigationBar: Bottom_navigation_bar(),
       body: SingleChildScrollView(
           child: Column(
         children: [

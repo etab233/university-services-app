@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import '../../bottom_navigation_bar.dart';
 import '../../Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../bottom_navigation_bar.dart';
 
 class AddComp extends StatefulWidget {
   const AddComp({super.key});
@@ -64,16 +64,12 @@ class _AddCompState extends State<AddComp> {
           body: json.encode({
             'subject': title,
             'description': content,
-            'created_at': DateTime.now().toIso8601String(),
-            'user_id': user_id,
           }),
         );
         if (response.statusCode == 200 || response.statusCode == 201) {
           final res = json.decode(response.body);
+          print(res);
           final message = res['message'];
-          setState(() {
-            date = DateTime.parse(res['created_at']);
-          });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("$message"),
             backgroundColor: Colors.green,
@@ -102,10 +98,11 @@ class _AddCompState extends State<AddComp> {
     }
   }
 
+  final _formkey=GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Bottom_navigation_bar(),
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       appBar: AppBar(
         title: const Text(
           "Whats your problem?",
@@ -149,12 +146,12 @@ class _AddCompState extends State<AddComp> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  width: 400,
-                  height: 400,
-                  margin: const EdgeInsets.only(top: 30),
+                  width: 360,
+                  height: 360,
+                  margin: const EdgeInsets.only(top: 15),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -184,28 +181,37 @@ class _AddCompState extends State<AddComp> {
                             width: 15,
                           ),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("$name",
-                                  style: const TextStyle(fontSize: 20)),
-                              Text(
-                                date != null
-                                    ? DateFormat('hh-mm a dd/MM/yyyy')
-                                        .format(date!)
-                                    : '',
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 14),
-                              )
-                            ],
-                          ),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("$name", style: const TextStyle(fontSize: 20)),
+                            Text(
+                              DateFormat('hh:mm a - dd-MM-yyyy')
+                                  .format(DateTime.now()),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 14),
+                            ),
+                          ],
+                        ),
                         ],
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      TextField(
-                        maxLength: 25,
+                      Form(
+                        key: _formkey,
+                        child: Column(
+                      children: [
+                        TextFormField(
+                        maxLength: 225,
+                        maxLines: null,
                         controller: _titleController,
+                        validator:(value) {
+                            if(value== null || value.isEmpty){
+                              return "Enter Title of your complaint please !";
+                            }
+                            return null;
+                          },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         decoration: InputDecoration(
                           labelText: "title",
                           enabledBorder: OutlineInputBorder(
@@ -227,11 +233,17 @@ class _AddCompState extends State<AddComp> {
                       const SizedBox(
                         height: 20,
                       ),
-                      SizedBox(
-                        height: 150,
-                        child: TextField(
-                          expands: true,
-                          maxLength: 255,
+                      TextFormField(
+                          validator: (value) {
+                          if( value ==null || value.isEmpty){
+                            return "Enter content please";
+                          }
+                          if(value.length<10){
+                            return " 10 characters at least !";
+                          }
+                          return null;
+                        },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           maxLines: null,
                           controller: _contentController,
                           decoration: InputDecoration(
@@ -252,6 +264,8 @@ class _AddCompState extends State<AddComp> {
                                 borderSide:
                                     BorderSide(color: Constants.primaryColor)),
                           ),
+                        ),
+                          ],
                         ),
                       ),
                     ],
@@ -295,8 +309,7 @@ class _AddCompState extends State<AddComp> {
                                 });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 252, 184, 179),
+                            backgroundColor: const Color.fromARGB(255, 252, 184, 179),
                             foregroundColor: Colors.black,
                             elevation: 10,
                           ),
@@ -313,7 +326,7 @@ class _AddCompState extends State<AddComp> {
                         height: 45,
                         width: 120,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: ()async {
                             sendComp();
                           },
                           style: ElevatedButton.styleFrom(
@@ -322,8 +335,7 @@ class _AddCompState extends State<AddComp> {
                             elevation: 5,
                           ),
                           child: const Text("Send",
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white)),
+                              style: TextStyle(fontSize: 20, color: Colors.white)),
                         ),
                       ),
                     ],

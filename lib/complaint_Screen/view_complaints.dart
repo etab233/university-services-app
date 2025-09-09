@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../Constants.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../bottom_navigation_bar.dart';
 
 class Complaints {
   final String student_name;
@@ -12,14 +12,15 @@ class Complaints {
   final String content;
   final String date;
   final int compId;
+  final String? imageUrl;
 
-  Complaints(this.student_name, this.title, this.content, this.date, this.compId);
+  Complaints(this.student_name, this.title, this.content, this.date, this.compId, this.imageUrl);
   factory Complaints.fromJson(Map<String, dynamic> json) {
     String date = json['created_at'];
     String dateFormat =
         DateFormat('hh:mm a - dd/MM/yyyy').format(DateTime.parse(date));
     return Complaints(json['user']['name'], json['subject'],
-        json['description'], dateFormat, json['id']);
+        json['description'], dateFormat, json['id'], json['user']['profile_image']);
   }
 }
 
@@ -97,8 +98,8 @@ class _ViewCompState extends State<ViewComp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       backgroundColor: Colors.white,
-      bottomNavigationBar: Bottom_navigation_bar(),
       appBar: AppBar(
         title: const Text(
           "Complaints",
@@ -179,9 +180,14 @@ class _ViewCompState extends State<ViewComp> {
                                 children: [
                                   Row(
                                     children: [
-                                      const Icon(Icons.person,
-                                          size: 30,
-                                          color: Constants.primaryColor),
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+                                           ? NetworkImage(item.imageUrl!)
+                                           : null,
+                                        child: (item.imageUrl == null || item.imageUrl!.isEmpty)
+                                           ? const Icon(Icons.person)
+                                           : null,),
                                       const SizedBox(
                                         width: 5,
                                       ),

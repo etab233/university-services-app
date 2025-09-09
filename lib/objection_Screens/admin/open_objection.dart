@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:log_in/Constants.dart';
-import 'package:log_in/bottom_navigation_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:log_in/login_Screen/AuthService.dart';
 
@@ -100,7 +99,6 @@ class _OpenObState extends State<OpenOb> {
         ),
         centerTitle: true,
       ),
-      bottomNavigationBar: Bottom_navigation_bar(),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: SingleChildScrollView(

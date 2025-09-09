@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../bottom_navigation_bar.dart';
 
 class Notification_content extends StatelessWidget {
   final String? name;
@@ -18,6 +18,7 @@ class Notification_content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -79,9 +80,7 @@ class Notification_content extends StatelessWidget {
                             ),
                             Text(
                               (date != null && date!.isNotEmpty)
-                                  ? DateFormat('dd/MM/yyyy').format(
-                                      DateTime.tryParse(date!) ?? DateTime.now(),
-                                    )
+                                  ? '$date'
                                   : '',
                               style: const TextStyle(
                                 color: Colors.grey,

@@ -9,18 +9,15 @@ class AuthService {
   static Future<Map<String, dynamic>> login({
     required String id,
     required String password,
-    String? email,
+    required String email,
   }) async {
     final url = Uri.parse('${Constants.baseUrl}/login');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final body = {
       'unique_id': id,
       'password': password,
+      'email' : email,
     };
-
-    if (email != null) {
-      body['email'] = email;
-    }
 
     try {
       final response = await http.post(
@@ -37,9 +34,7 @@ class AuthService {
         await prefs.setString('role', data['User']["role"]);
         await prefs.setString('id', data['User']["unique_id"]);
         await prefs.setBool('success', true);
-        // String? token = await prefs.getString('token') ?? "token is NULL";
-        // print(token);
-        return {
+        return { 
           'success': true,
           'message': data['message'],
           'Token': data['Token'],
@@ -60,11 +55,6 @@ class AuthService {
       };
     }
   }
-
-  // void showMessage(String message) {
-  //   ScaffoldMessenger.of(context as BuildContext)
-  //       .showSnackBar(SnackBar(content: Text(message)));
-  // }
 
   static Future<void> logout(BuildContext context) async {
     String? token = await getToken();

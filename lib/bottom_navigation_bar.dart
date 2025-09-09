@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:log_in/settings.dart';
-import 'package:log_in/profile/myprofile.dart';
-import './home_Screen/homePage.dart';
+import './home_Screen/homepage.dart';
+import './settings.dart';
+import './profile/myprofile.dart';
 
-void _navigateToPage(BuildContext context, int index, List widgets) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => widgets[index]));
-}
+class BottomNavigation extends StatelessWidget {
+  final int currentIndex;
 
-class Bottom_navigation_bar extends StatefulWidget {
-  Bottom_navigation_bar({Key? key}) : super(key: key);
-  @override
-  _Bottom_navigation_barState createState() => _Bottom_navigation_barState();
-}
+  const BottomNavigation({
+    Key? key,
+    required this.currentIndex,
+  }) : super(key: key);
 
-class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
-  List widgets = [HomePage(), Settings(), MyProfile()];
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -22,25 +18,52 @@ class _Bottom_navigation_barState extends State<Bottom_navigation_bar> {
       selectedItemColor: Colors.blue,
       unselectedItemColor: Colors.black,
       showUnselectedLabels: true,
+      // إذا كان -1 خليها 0 بس منتحكم بالألوان يدوياً
+      currentIndex: currentIndex == -1 ? 0 : currentIndex,
+      onTap: (index) {
+        if (index == currentIndex) return;
+
+        switch (index) {
+          case 0:
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const HomePage()));
+            break;
+          case 1:
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Settings()));
+            break;
+          case 2:
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MyProfile()));
+            break;
+        }
+      },
       iconSize: 30,
       type: BottomNavigationBarType.fixed,
-      landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-      onTap: (index) => _navigateToPage(context, index, widgets),
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'home',
-          activeIcon: Icon(Icons.home),
+          icon: const Icon(Icons.home_outlined),
+          label: 'Home',
+          activeIcon: Icon(
+            Icons.home,
+            color: currentIndex == 0 ? Colors.blue : Colors.black,
+          ),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'settings',
-          activeIcon: Icon(Icons.settings),
+          icon: const Icon(Icons.settings_outlined),
+          label: 'Settings',
+          activeIcon: Icon(
+            Icons.settings,
+            color: currentIndex == 1 ? Colors.blue : Colors.black,
+          ),
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_2_outlined),
-          label: 'profile',
-          activeIcon: Icon(Icons.person_2, color: Colors.blue),
+          icon: const Icon(Icons.person_2_outlined),
+          label: 'Profile',
+          activeIcon: Icon(
+            Icons.person_2,
+            color: currentIndex == 2 ? Colors.blue : Colors.black,
+          ),
         ),
       ],
     );

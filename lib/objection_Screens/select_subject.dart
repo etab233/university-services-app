@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:log_in/bottom_navigation_bar.dart';
 import 'package:log_in/login_Screen/AuthService.dart';
 import 'package:log_in/objection_Screens/admin/open_objection.dart';
 import 'package:log_in/objection_Screens/admin/view_objection.dart';
@@ -116,7 +115,6 @@ class _SelectSubState extends State<SelectSub> {
                   ),
                 )
             ]),
-        bottomNavigationBar: Bottom_navigation_bar(),
         body: SingleChildScrollView(
           child: Container(
             padding:
