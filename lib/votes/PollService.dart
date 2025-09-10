@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:university_services/login_Screen/log_in.dart';
 import '../login_Screen/AuthService.dart';
 import 'package:university_services/Constants.dart';

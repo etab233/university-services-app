@@ -117,7 +117,7 @@ class _PollCardState extends State<PollCard> {
   }
 
   // حساب عدد الأصوات الكلي
-  int get totalvotes => pollOptions.fold(0, (a, b) => a + (b.votesCount ?? 0));
+  int get totalvotes => pollOptions.fold(0, (a, b) => a + (b.votesCount));
 
   // التصويت لخيار محدد
   Future<void> vote() async {
@@ -311,7 +311,7 @@ class _PollCardState extends State<PollCard> {
                       Row(children: [
                         Expanded(
                             child: Tooltip(
-                          message: " ${option.votesCount ?? 0} votes",
+                          message: " ${option.votesCount} votes",
                           child: LinearPercentIndicator(
                               width: 229,
                               lineHeight: 8,

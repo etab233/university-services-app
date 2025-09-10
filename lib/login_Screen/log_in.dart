@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university_services/home_Screen/mainPage.dart';
+import 'package:university_services/bottom_navigation_bar.dart';
 import 'package:university_services/login_Screen/register.dart';
 import 'forgotPassword.dart';
 import 'AuthService.dart';
@@ -77,7 +77,7 @@ class _Log_inState extends State<Log_in> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MainScreen()),
+            MaterialPageRoute(builder: (context) => bottomNavigationBar()),
           );
         }
       }

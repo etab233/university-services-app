@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../bottom_navigation_bar.dart';
 
 class Notification_content extends StatelessWidget {
   final String? name;
@@ -18,7 +17,6 @@ class Notification_content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -63,9 +61,10 @@ class Notification_content extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 20,
-                          backgroundImage: (imageUrl != null && imageUrl!.isNotEmpty)
-                              ? NetworkImage(imageUrl!)
-                              : null,
+                          backgroundImage:
+                              (imageUrl != null && imageUrl!.isNotEmpty)
+                                  ? NetworkImage(imageUrl!)
+                                  : null,
                           child: (imageUrl == null || imageUrl!.isEmpty)
                               ? const Icon(Icons.person)
                               : null,
@@ -79,9 +78,7 @@ class Notification_content extends StatelessWidget {
                               style: const TextStyle(fontSize: 20),
                             ),
                             Text(
-                              (date != null && date!.isNotEmpty)
-                                  ? '$date'
-                                  : '',
+                              (date != null && date!.isNotEmpty) ? '$date' : '',
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,

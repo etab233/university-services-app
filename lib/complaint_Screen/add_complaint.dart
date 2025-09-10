@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../bottom_navigation_bar.dart';
 
 class AddComp extends StatefulWidget {
   const AddComp({super.key});
@@ -101,9 +100,6 @@ class _AddCompState extends State<AddComp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavigation(
-        currentIndex: -1,
-      ),
       appBar: AppBar(
         title: const Text(
           "Whats your problem?",

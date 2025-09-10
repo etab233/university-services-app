@@ -133,6 +133,11 @@ class _MyProfileState extends State<MyProfile> {
                 fontSize: 24, color: Colors.black, fontWeight: FontWeight.w600),
           ),
           centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.abc)),
         ),
         body: isLoading == true
             ? Center(

@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:university_services/bottom_navigation_bar.dart';
 
 import 'package:university_services/login_Screen/AuthService.dart';
-import '../home_Screen/homePage.dart';
 import '../Constants.dart';
-import '../bottom_navigation_bar.dart';
 import 'package:http/http.dart' as http;
 
 class Objection extends StatefulWidget {
@@ -22,7 +21,7 @@ class Objection extends StatefulWidget {
 }
 
 class ObjectionState extends State<Objection> {
-  int currentIndex=6;
+  int currentIndex = 6;
   final TextEditingController _gradeController = TextEditingController();
   final TextEditingController _testHallController = TextEditingController();
   final TextEditingController _lecturerNameController = TextEditingController();
@@ -83,8 +82,9 @@ class ObjectionState extends State<Objection> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Constants.showMessage(context, data['message'], Colors.green);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()),);
-    
+          context,
+          MaterialPageRoute(builder: (context) => bottomNavigationBar()),
+        );
       } else if (data.containsKey('message')) {
         Constants.showMessage(context, data['message'], Colors.red);
       } else if (data.containsKey('errors')) {
@@ -118,7 +118,6 @@ class ObjectionState extends State<Objection> {
                   Icons.arrow_back,
                   size: 30,
                 ))),
-        bottomNavigationBar: BottomNavigation(currentIndex: -1,),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(children: [
@@ -181,9 +180,11 @@ class ObjectionState extends State<Objection> {
                 MaterialButton(
                     height: 45,
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
-        },
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => bottomNavigationBar()));
+                    },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     color: const Color.fromARGB(255, 252, 184, 179),
@@ -197,19 +198,13 @@ class ObjectionState extends State<Objection> {
                   width: 20,
                 ),
                 isLoading
-                    ?const CircularProgressIndicator(
+                    ? const CircularProgressIndicator(
                         color: Constants.primaryColor,
                       )
                     : MaterialButton(
                         height: 45,
                         onPressed: () {
                           submitObjection();
-                          // Constants.showMessage(
-                          //     context, "Objection submitted", Colors.green);
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => HomePage()));
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),

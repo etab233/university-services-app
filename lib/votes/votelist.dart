@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'PollService.dart';
 import 'poll_card.dart';
-import '../bottom_navigation_bar.dart';
 import '../login_Screen/AuthService.dart';
 import 'add_poll.dart';
 import 'polls.dart';
@@ -217,9 +216,6 @@ class _VoteListState extends State<VoteList> {
                         }),
                   ),
       ]),
-
-      // شريط التنقل السفلي
-      bottomNavigationBar: BottomNavigation(currentIndex: 0,),
     );
   }
 }

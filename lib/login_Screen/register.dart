@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:university_services/bottom_navigation_bar.dart';
 import 'AuthService.dart';
-import '../home_Screen/homePage.dart';
 import '../Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,7 +79,7 @@ class _RegisterState extends State<Register> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => bottomNavigationBar()),
           );
         }
       }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:university_services/bottom_navigation_bar.dart';
 import 'package:university_services/login_Screen/AuthService.dart';
 import 'package:university_services/objection_Screens/admin/open_objection.dart';
 import 'package:university_services/objection_Screens/admin/view_objection.dart';
@@ -65,6 +64,7 @@ class _SelectSubState extends State<SelectSub> {
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       Constants.showMessage(
           context, "Failed to connect server: $e", Colors.red);
       setState(() {
@@ -79,7 +79,6 @@ class _SelectSubState extends State<SelectSub> {
 
   bool EnableTerm = false;
   bool EnableButton = false;
-  // int _currentIndex = 0;
   String? year;
   String? term;
   String? subject;
@@ -120,9 +119,6 @@ class _SelectSubState extends State<SelectSub> {
                   ),
                 )
             ]),
-        bottomNavigationBar: BottomNavigation(
-          currentIndex: -1,
-        ),
         body: SingleChildScrollView(
           child: Container(
             padding:

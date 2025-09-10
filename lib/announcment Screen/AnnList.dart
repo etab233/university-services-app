@@ -5,7 +5,6 @@ import 'dart:convert';
 import '../Constants.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../bottom_navigation_bar.dart';
 
 class Announcement {
   final String name; //اسم صاحب الإعلان
@@ -22,7 +21,7 @@ class Announcement {
       required this.content,
       required this.userid,
       required this.annid,
-      this.imageUrl}); 
+      this.imageUrl});
 
   // factory named constructor
   // Announcement إلى كائن من النوع API  تحول البيانات القادمة من
@@ -57,8 +56,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
     super.initState();
     initData();
   }
- 
-  void initData() async { 
+
+  void initData() async {
     final prefs = await SharedPreferences
         .getInstance(); // الوصول للبيانات المخزنة في الجهاز
     final token = prefs.getString('Token'); // استرجاع التوكن
@@ -100,12 +99,13 @@ class _AnnouncementListState extends State<AnnouncementList> {
           announcements =
               jsonData.map((item) => Announcement.fromJson(item)).toList();
           isLoading = false;
-        }); 
-      } else {  
+        });
+      } else {
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
       print('Error: $e');
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
@@ -154,10 +154,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
     // No Announcement وإذا لا يوجد إعلانات يتم عرض
     // وإلا يتم عرض الإعلانات من قاعدة البيانات  وبناء الواجهة
     return Scaffold(
-      bottomNavigationBar:const BottomNavigation(currentIndex: -1,),
       backgroundColor: Colors.white,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text('Announcements',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -200,50 +198,46 @@ class _AnnouncementListState extends State<AnnouncementList> {
             ),
         ],
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Constants.primaryColor,
-            ))
-          : announcements.isEmpty
-              ? const Center(
-                  child: Text(
-                  'No Announcements',
-                  style: TextStyle(fontSize: 18),
-                ))
-              : Stack(
-                  children: [
-                    // خلفية بتدرج لوني
-                    Positioned.fill(
-                      child: Column(
-                        children: [
-                          Expanded(
-                              flex: 3,
-                              child: Container(color: const Color(0xffffffff))),
-                          Expanded(
-                            flex: 7,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFFBFE4FA),
-                                    Color(0xff6fb1d9)
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(80),
-                                  topRight: Radius.circular(80),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+      body: Stack(
+        children: [
+          // خلفية بتدرج لوني
+          Positioned.fill(
+            child: Column(
+              children: [
+                Expanded(
+                    flex: 3, child: Container(color: const Color(0xffffffff))),
+                Expanded(
+                  flex: 7,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFBFE4FA), Color(0xff6fb1d9)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(80),
+                        topRight: Radius.circular(80),
                       ),
                     ),
-                    // نهاية أول عنصر الخلفية ونبدأ بقائمة الإعلانات
-                    Padding(
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // نهاية أول عنصر الخلفية ونبدأ بقائمة الإعلانات
+          isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  color: Constants.primaryColor,
+                ))
+              : announcements.isEmpty
+                  ? const Center(
+                      child: Text(
+                      'No Announcements',
+                      style: TextStyle(fontSize: 18),
+                    ))
+                  : Padding(
                       padding: const EdgeInsets.all(20),
                       // قائمة ديناميكية من الإعلانات
                       child: ListView.builder(
@@ -273,12 +267,15 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                   children: [
                                     CircleAvatar(
                                       radius: 20,
-                                      backgroundImage: (item.imageUrl != null && item.imageUrl!.isNotEmpty)
+                                      backgroundImage: (item.imageUrl != null &&
+                                              item.imageUrl!.isNotEmpty)
                                           ? NetworkImage(item.imageUrl!)
                                           : null,
-                                      child: (item.imageUrl == null || item.imageUrl!.isEmpty)
+                                      child: (item.imageUrl == null ||
+                                              item.imageUrl!.isEmpty)
                                           ? const Icon(Icons.person)
-                                         : null,),
+                                          : null,
+                                    ),
                                     const SizedBox(width: 8),
                                     Column(
                                       crossAxisAlignment:
@@ -321,7 +318,9 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                                 // مرر الإعلان الحالي لتقوم بملء محتوى الإعلان في الواجهة تلقائيًا
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Add_Edit_Announcement(announcement:item)));
+                                                        Add_Edit_Announcement(
+                                                            announcement:
+                                                                item)));
                                             if (result == true) {
                                               final prefs =
                                                   await SharedPreferences
@@ -344,15 +343,21 @@ class _AnnouncementListState extends State<AnnouncementList> {
                                                     actions: [
                                                       TextButton(
                                                           onPressed: () =>
-                                                              Navigator.of(context).pop(),
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
                                                           child: const Text(
                                                               "cancel")),
                                                       TextButton(
                                                           onPressed: () {
-                                                            Navigator.of(context).pop(); // إغلاق مربع الحوار
-                                                            deleteAnnouncement(item.annid); // تنفيذ الحذف
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // إغلاق مربع الحوار
+                                                            deleteAnnouncement(item
+                                                                .annid); // تنفيذ الحذف
                                                           },
-                                                          child: const Text("Yes")),
+                                                          child: const Text(
+                                                              "Yes")),
                                                     ],
                                                   );
                                                 });
@@ -386,8 +391,8 @@ class _AnnouncementListState extends State<AnnouncementList> {
                         },
                       ),
                     ),
-                  ],
-                ),
+        ],
+      ),
     );
   }
 }

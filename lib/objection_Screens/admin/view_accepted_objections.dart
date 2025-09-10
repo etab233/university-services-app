@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:university_services/login_Screen/AuthService.dart';
 import 'package:university_services/objection_Screens/admin/card_element.dart';
-import '../../../bottom_navigation_bar.dart';
 import 'dart:convert';
 import '../../../Constants.dart';
 
@@ -70,7 +69,6 @@ class _AcceptedObjectionsState extends State<AcceptedObjections> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: BottomNavigation(currentIndex: -1,),
       appBar: AppBar(
         title: Text(
           "Accepted Objections",
@@ -86,45 +84,44 @@ class _AcceptedObjectionsState extends State<AcceptedObjections> {
               size: 30, color: Constants.primaryColor),
         ),
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Constants.primaryColor,
-            ))
-          : objections.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No Accepted Objections',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : Stack(children: [
-                  Positioned.fill(
-                    child: Column(
-                      children: [
-                        Expanded(
-                            flex: 3,
-                            child: Container(color: const Color(0xffffffff))),
-                        Expanded(
-                          flex: 7,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xFFBFE4FA), Color(0xff6fb1d9)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(80),
-                                topRight: Radius.circular(80),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+      body: Stack(children: [
+        Positioned.fill(
+          child: Column(
+            children: [
+              Expanded(
+                  flex: 3, child: Container(color: const Color(0xffffffff))),
+              Expanded(
+                flex: 7,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFBFE4FA), Color(0xff6fb1d9)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(80),
+                      topRight: Radius.circular(80),
                     ),
                   ),
-                  Padding(
+                ),
+              ),
+            ],
+          ),
+        ),
+        isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: Constants.primaryColor,
+              ))
+            : objections.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No Accepted Objections',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : Padding(
                     padding: const EdgeInsets.all(20),
                     child: ListView.builder(
                       itemCount: objections.length,
@@ -187,7 +184,7 @@ class _AcceptedObjectionsState extends State<AcceptedObjections> {
                       },
                     ),
                   ),
-                ]),
+      ]),
     );
   }
 }

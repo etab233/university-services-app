@@ -65,6 +65,7 @@ class _ViewCompState extends State<ViewComp> {
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
+      if (!mounted) return;
       Constants.showMessage(context, "$e", Colors.red);
       setState(() {
         isLoading = false;
@@ -103,9 +104,6 @@ class _ViewCompState extends State<ViewComp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavigation(
-        currentIndex: -1,
-      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
